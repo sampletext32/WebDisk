@@ -40,7 +40,7 @@ namespace Client
             _socket.EndConnect(_connectResult);
         }
 
-        public object PerformCommand(SocketCommand command)
+        public T PerformCommand<T>(SocketCommand command)
         {
             var bytes = command.Serialize();
 
@@ -61,13 +61,12 @@ namespace Client
             buffer = new byte[dataSize];
             _socket.Receive(buffer, 0, dataSize, SocketFlags.None);
 
-            var socketCommand = SocketCommand.Deserialize(buffer);
-            var objectData = ClientCommandHandler.Handle(socketCommand);
+            var response = ProcessResponse<T>(buffer);
 
             _socket.Shutdown(SocketShutdown.Both);
             _socket.Close();
 
-            return objectData;
+            return response;
         }
 
         private T ProcessResponse<T>(byte[] data)
