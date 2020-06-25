@@ -37,7 +37,7 @@ namespace Entities.TreeNodes
 
         public TreeNode GetTree()
         {
-            if (IsTreeAvailable())
+            if (!IsTreeAvailable())
             {
                 LogBuilder.Get().AppendError("Attempted To Get File Tree When Not Retrieved");
                 throw new InvalidOperationException("Tree Is Not Retrieved");
