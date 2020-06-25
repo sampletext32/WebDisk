@@ -42,8 +42,8 @@ namespace Client
                 var hash = treeNode.GetHash();
 
                 CompareHashCommand command = new CompareHashCommand(hash);
-                var commandResult = Handler.PerformCommand(command);
-                if ((bool) commandResult == true)
+                var commandResult = Handler.PerformCommand<ResponseCompareHashCommand>(command);
+                if (commandResult.GetData() == true)
                 {
                     Console.WriteLine("Folders equals");
                 }
