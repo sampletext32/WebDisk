@@ -45,6 +45,7 @@
     <Compile Include="TreeNodes\TreeFileNode.cs" />
     <Compile Include="TreeNodes\TreeFolderNode.cs" />
     <Compile Include="TreeNodes\TreeNode.cs" />
+    <Compile Include="LogBuilder.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup />
