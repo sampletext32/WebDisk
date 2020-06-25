@@ -5,6 +5,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
+using Entities;
 
 namespace Server
 {
@@ -65,13 +66,19 @@ namespace Server
         private void OnClientContinueReceive(IAsyncResult ar)
         {
             SocketData socketData = (SocketData) ar.AsyncState;
-            int dataSize = socketData.Socket.EndReceive(ar);
-            socketData.ReceivedBytes += dataSize;
+            int requestDataSize = socketData.Socket.EndReceive(ar);
+            socketData.ReceivedBytes += requestDataSize;
             if (socketData.ReceivedBytes == socketData.Buffer.Length)
             {
-                ProcessData(socketData.Buffer);
-                // TODO: Send Response
+                var responseCommand = ProcessData(socketData.Buffer);
 
+                var bytes = responseCommand.Serialize();
+
+                // Send size
+                socketData.Socket.Send(BitConverter.GetBytes(bytes.Length), 0, 4, SocketFlags.None);
+                // Send data
+                socketData.Socket.Send(bytes, 0, bytes.Length, SocketFlags.None);
+                
                 socketData.Socket.Shutdown(SocketShutdown.Both);
                 socketData.Socket.Close();
                 _datas.Remove(socketData);
@@ -84,12 +91,11 @@ namespace Server
             }
         }
 
-        private void ProcessData(byte[] data)
+        private SocketCommand ProcessData(byte[] data)
         {
-            var s = Encoding.UTF8.GetString(data);
-            Console.WriteLine(s);
-
-
+            var socketCommand = SocketCommand.Deserialize(data);
+            var command = ServerCommandHandler.Handle(socketCommand);
+            return command;
         }
     }
 }
