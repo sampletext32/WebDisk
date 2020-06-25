@@ -4,7 +4,9 @@ using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
+using Entities;
 
 namespace Client
 {
@@ -36,16 +38,36 @@ namespace Client
         private void OnConnect(IAsyncResult ar)
         {
             _socket.EndConnect(_connectResult);
+        }
 
-            string testData = "Hello, i am client";
-            var bytes = Encoding.UTF8.GetBytes(testData);
-            //TODO: Send data size
+        public object PerformCommand(SocketCommand command)
+        {
+            var bytes = command.Serialize();
+
+            Init();
+            Connect();
+
+            while (!_connectResult.AsyncWaitHandle.WaitOne(10))
+            {
+                Thread.Sleep(1);
+            }
+
             _socket.Send(BitConverter.GetBytes(bytes.Length), 0, 4, SocketFlags.None);
-            //TODO: Send request
             _socket.Send(bytes, 0, bytes.Length, SocketFlags.None);
+
+            byte[] buffer = new byte[4];
+            _socket.Receive(buffer, 0, 4, SocketFlags.None);
+            int dataSize = BitConverter.ToInt32(buffer, 0);
+            buffer = new byte[dataSize];
+            _socket.Receive(buffer, 0, dataSize, SocketFlags.None);
+
+            var socketCommand = SocketCommand.Deserialize(buffer);
+            var objectData = ClientCommandHandler.Handle(socketCommand);
 
             _socket.Shutdown(SocketShutdown.Both);
             _socket.Close();
+
+            return objectData;
         }
     }
 }
