@@ -69,5 +69,12 @@ namespace Client
 
             return objectData;
         }
+
+        private T ProcessResponse<T>(byte[] data)
+        {
+            var socketCommand = SocketCommand.Deserialize(data);
+            var responseCommand = ClientCommandHandler.Upcast(socketCommand);
+            return (T)responseCommand;
+        }
     }
 }

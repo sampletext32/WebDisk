@@ -91,7 +91,7 @@ namespace Server
             }
         }
 
-        private SocketCommand ProcessData(byte[] data)
+        private SocketCommand ProcessRequest(byte[] data)
         {
             var socketCommand = SocketCommand.Deserialize(data);
             var command = ServerCommandHandler.Handle(socketCommand);
