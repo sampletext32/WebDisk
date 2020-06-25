@@ -52,14 +52,9 @@ namespace Client
                 Thread.Sleep(1);
             }
 
-            _socket.Send(BitConverter.GetBytes(bytes.Length), 0, 4, SocketFlags.None);
-            _socket.Send(bytes, 0, bytes.Length, SocketFlags.None);
+            Utils.SendWithSizeHeader(_socket, bytes);
 
-            byte[] buffer = new byte[4];
-            _socket.Receive(buffer, 0, 4, SocketFlags.None);
-            int dataSize = BitConverter.ToInt32(buffer, 0);
-            buffer = new byte[dataSize];
-            _socket.Receive(buffer, 0, dataSize, SocketFlags.None);
+            byte[] buffer = Utils.ReceiveWithSizeHeader(_socket);
 
             var response = ProcessResponse<T>(buffer);
 

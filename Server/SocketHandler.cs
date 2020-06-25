@@ -70,14 +70,11 @@ namespace Server
             socketData.ReceivedBytes += requestDataSize;
             if (socketData.ReceivedBytes == socketData.Buffer.Length)
             {
-                var responseCommand = ProcessData(socketData.Buffer);
+                var responseCommand = ProcessRequest(socketData.Buffer);
 
                 var bytes = responseCommand.Serialize();
-
-                // Send size
-                socketData.Socket.Send(BitConverter.GetBytes(bytes.Length), 0, 4, SocketFlags.None);
-                // Send data
-                socketData.Socket.Send(bytes, 0, bytes.Length, SocketFlags.None);
+                
+                Utils.SendWithSizeHeader(socketData.Socket, bytes);
                 
                 socketData.Socket.Shutdown(SocketShutdown.Both);
                 socketData.Socket.Close();
