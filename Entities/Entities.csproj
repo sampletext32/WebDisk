@@ -41,11 +41,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="FileTreeAnalyzer.cs" />
-    <Compile Include="FileTreeFileNode.cs" />
-    <Compile Include="FileTreeFolderNode.cs" />
-    <Compile Include="FileTreeNode.cs" />
+    <Compile Include="TreeNodes\TreeAnalyzer.cs" />
+    <Compile Include="TreeNodes\TreeFileNode.cs" />
+    <Compile Include="TreeNodes\TreeFolderNode.cs" />
+    <Compile Include="TreeNodes\TreeNode.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

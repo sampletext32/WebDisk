@@ -1,11 +1,11 @@
-﻿namespace Entities
+﻿namespace Entities.TreeNodes
 {
-    public class FileTreeNode
+    public class TreeNode
     {
         protected string m_name;
         protected long m_size;//using backing field for not recollecting size
 
-        public FileTreeNode(string name)
+        public TreeNode(string name)
         {
             this.m_name = name;
         }

@@ -1,8 +1,8 @@
-﻿namespace Entities
+﻿namespace Entities.TreeNodes
 {
-    public class FileTreeFileNode : FileTreeNode
+    public class TreeFileNode : TreeNode
     {
-        public FileTreeFileNode(string name, long size) : base(name)
+        public TreeFileNode(string name, long size) : base(name)
         {
             m_size = size;
         }

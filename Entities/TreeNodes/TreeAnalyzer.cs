@@ -1,34 +1,30 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 
-namespace Entities
+namespace Entities.TreeNodes
 {
-    public class FileTreeAnalyzer
+    public class TreeAnalyzer
     {
         private string m_rootPath;
         private int m_maxNestingLevel;
 
-        private FileTreeNode m_tree;
-
-        private SortedDictionary<string, int> m_fileExtensionsStats;
+        private TreeNode m_tree;
 
         public bool IsTreeAvailable()
         {
             return m_tree != null;
         }
 
-        public FileTreeAnalyzer(string rootPath, int maxNestingLevel = int.MaxValue)
+        public TreeAnalyzer(string rootPath, int maxNestingLevel = int.MaxValue)
         {
             SetNestingLevel(maxNestingLevel);
-            if (rootPath == null)
+            if (rootPath == string.Empty)
             {
-                throw new ArgumentNullException("rootPath was null");
+                throw new ArgumentNullException("rootPath was empty");
             }
 
             m_rootPath = rootPath;
             m_tree = null;
-            m_fileExtensionsStats = new SortedDictionary<string, int>();
         }
 
         public void Retrieve()
@@ -39,9 +35,9 @@ namespace Entities
             m_tree = RetrieveFolder(m_rootPath, 1);
         }
 
-        public FileTreeNode GetTree()
+        public TreeNode GetTree()
         {
-            if (m_tree == null)
+            if (IsTreeAvailable())
             {
                 LogBuilder.Get().AppendError("Attempted To Get File Tree When Not Retrieved");
                 throw new InvalidOperationException("Tree Is Not Retrieved");
@@ -50,7 +46,7 @@ namespace Entities
             return m_tree;
         }
 
-        private FileTreeNode RetrieveFolder(string absolutePath, int nestingLevel)
+        private TreeNode RetrieveFolder(string absolutePath, int nestingLevel)
         {
             if (!PathIsDirectory(absolutePath))
             {
@@ -62,7 +58,7 @@ namespace Entities
                 ? absolutePath
                 : absolutePath.Substring(absolutePath.LastIndexOf(Path.DirectorySeparatorChar));
 
-            FileTreeFolderNode currentFolderNode = new FileTreeFolderNode(currentFolderName);
+            TreeFolderNode currentFolderNode = new TreeFolderNode(currentFolderName);
 
             string currentFolderPath = Path.Combine(m_rootPath, absolutePath);
 
@@ -79,12 +75,10 @@ namespace Entities
                 foreach (var innerDirectoryPath in innerDirectoriesPaths)
                 {
                     LogBuilder.Get().AppendInfo($"Found Folder \"{innerDirectoryPath}\"");
-                    FileTreeNode folderNode = RetrieveFolder(
+                    TreeNode folderNode = RetrieveFolder(
                         innerDirectoryPath,
                         nestingLevel + 1);
                     currentFolderNode.AddChild(folderNode);
-
-                    ProcessStatsForFolder(innerDirectoryPath);
                 }
             }
             catch
@@ -99,10 +93,9 @@ namespace Entities
                 foreach (var innerFilePath in innerFilesPaths)
                 {
                     LogBuilder.Get().AppendInfo($"Found File \"{innerFilePath}\"");
-                    FileTreeNode fileNode = new FileTreeFileNode(Path.GetFileName(innerFilePath),
+                    TreeNode node = new TreeFileNode(Path.GetFileName(innerFilePath),
                         new FileInfo(innerFilePath).Length);
-                    currentFolderNode.AddChild(fileNode);
-                    ProcessStatsForFile(innerFilePath);
+                    currentFolderNode.AddChild(node);
                 }
             }
             catch
@@ -111,42 +104,6 @@ namespace Entities
             }
 
             return currentFolderNode;
-        }
-        private void CreateOrIncrementExtensionKey(string key)
-        {
-            if (m_fileExtensionsStats.ContainsKey(key))
-            {
-                //Not quite sure about dictionary handling inplace operations
-                m_fileExtensionsStats[key] = m_fileExtensionsStats[key] + 1;
-            }
-            else
-            {
-                m_fileExtensionsStats[key] = 1;
-            }
-        }
-
-        private void ProcessStatsForFolder(string folderPath)
-        {
-            CreateOrIncrementExtensionKey("folders");
-        }
-
-
-        private void ProcessStatsForFile(string filePath)
-        {
-            string extension = Path.GetExtension(filePath);
-            CreateOrIncrementExtensionKey(extension);
-            CreateOrIncrementExtensionKey("files");
-        }
-
-        public SortedDictionary<string, int> GetExtensionsStats()
-        {
-            if (m_tree == null)
-            {
-                LogBuilder.Get().AppendError("Attempted To Get ExtensionStats When Not Retrieved");
-                throw new InvalidOperationException("Tree Is Not Retrieved");
-            }
-
-            return m_fileExtensionsStats;
         }
 
         private static bool PathIsDirectory(string path)

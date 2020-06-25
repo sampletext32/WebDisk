@@ -1,18 +1,18 @@
 ﻿using System.Collections.Generic;
 using System.Text;
 
-namespace Entities
+namespace Entities.TreeNodes
 {
-    public class FileTreeFolderNode : FileTreeNode
+    public class TreeFolderNode : TreeNode
     {
-        private List<FileTreeNode> m_children;
+        private List<TreeNode> m_children;
 
-        public FileTreeFolderNode(string name) : base(name)
+        public TreeFolderNode(string name) : base(name)
         {
-            m_children = new List<FileTreeNode>();
+            m_children = new List<TreeNode>();
         }
 
-        public void AddChild(FileTreeNode child)
+        public void AddChild(TreeNode child)
         {
             m_children.Add(child);
             m_size += child.GetSize();
