@@ -44,13 +44,13 @@ namespace Server
         {
             var socketClient = _socketListener.EndAccept(_acceptResult);
             SocketData socketData = new SocketData(socketClient, 4);
-            socketClient.BeginReceive(socketData.Buffer, 0, 4, SocketFlags.None, OnClientFirstRecieve, socketData);
+            socketClient.BeginReceive(socketData.Buffer, 0, 4, SocketFlags.None, OnClientFirstReceive, socketData);
             _datas.Add(socketData);
 
             _acceptResult = _socketListener.BeginAccept(OnAccept, null);
         }
 
-        private void OnClientFirstRecieve(IAsyncResult ar)
+        private void OnClientFirstReceive(IAsyncResult ar)
         {
             SocketData socketData = (SocketData) ar.AsyncState;
             socketData.Socket.EndReceive(ar);
@@ -58,11 +58,11 @@ namespace Server
             int dataSize = BitConverter.ToInt32(data, 0);
             socketData.SetBufferSize(dataSize);
 
-            socketData.Socket.BeginReceive(socketData.Buffer, 0, dataSize, SocketFlags.None, OnClientContinueRecieve,
+            socketData.Socket.BeginReceive(socketData.Buffer, 0, dataSize, SocketFlags.None, OnClientContinueReceive,
                 socketData);
         }
 
-        private void OnClientContinueRecieve(IAsyncResult ar)
+        private void OnClientContinueReceive(IAsyncResult ar)
         {
             SocketData socketData = (SocketData) ar.AsyncState;
             int dataSize = socketData.Socket.EndReceive(ar);
@@ -79,7 +79,7 @@ namespace Server
             else
             {
                 socketData.Socket.BeginReceive(socketData.Buffer, socketData.ReceivedBytes, 8192, SocketFlags.None,
-                    OnClientContinueRecieve,
+                    OnClientContinueReceive,
                     socketData);
             }
         }
