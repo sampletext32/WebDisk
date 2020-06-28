@@ -5,7 +5,7 @@ namespace Entities.TreeNodes
 {
     public class TreeAnalyzer
     {
-        private TreeNode m_tree;
+        private TreeNode _tree;
 
         public TreeAnalyzer()
         {
@@ -13,7 +13,14 @@ namespace Entities.TreeNodes
 
         public bool IsTreeAvailable()
         {
-            return m_tree != null;
+            return _tree != null;
+        }
+
+        public static TreeNode BuildTree(string absolutePath)
+        {
+            TreeAnalyzer analyzer = new TreeAnalyzer();
+            analyzer.Retrieve(absolutePath);
+            return analyzer.GetTree();
         }
 
         public void Retrieve(string absoluteFolderPath)
@@ -21,7 +28,7 @@ namespace Entities.TreeNodes
             LogBuilder.Get()
                 .AppendInfo(
                     $"Started FileTree Retrieving At \"{absoluteFolderPath}");
-            m_tree = RetrieveFolder(absoluteFolderPath, "");
+            _tree = RetrieveFolder(absoluteFolderPath, "");
         }
 
         public TreeNode GetTree()
@@ -32,7 +39,7 @@ namespace Entities.TreeNodes
                 throw new InvalidOperationException("Tree Is Not Retrieved");
             }
 
-            return m_tree;
+            return _tree;
         }
 
         private TreeNode RetrieveFolder(string analyzingRoot, string relativePath)
@@ -86,7 +93,7 @@ namespace Entities.TreeNodes
                 {
                     var fileName = innerFilePath.Substring(innerFilePath.LastIndexOf(Path.DirectorySeparatorChar) + 1);
                     LogBuilder.Get().AppendInfo($"Found File \"{fileName}\"");
-                    TreeNode node = new TreeFileNode(fileName, new FileInfo(innerFilePath).Length);
+                    TreeNode node = new TreeFileNode(fileName);
                     currentFolderNode.AddChild(node);
                 }
             }
@@ -100,8 +107,15 @@ namespace Entities.TreeNodes
 
         private static bool PathIsDirectory(string path)
         {
-            FileAttributes fa = File.GetAttributes(path);
-            return fa.HasFlag(FileAttributes.Directory);
+            try
+            {
+                FileAttributes fa = File.GetAttributes(path);
+                return fa.HasFlag(FileAttributes.Directory);
+            }
+            catch
+            {
+                return false;
+            }
         }
     }
 }

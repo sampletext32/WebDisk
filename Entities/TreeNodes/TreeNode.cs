@@ -9,16 +9,10 @@ namespace Entities.TreeNodes
     public class TreeNode
     {
         protected string m_name;
-        protected long m_size; //using backing field for not recollecting size
 
         public TreeNode(string name)
         {
             this.m_name = name;
-        }
-
-        public long GetSize()
-        {
-            return m_size;
         }
 
         public string GetName()
@@ -64,14 +58,14 @@ namespace Entities.TreeNodes
             }
         }
 
-        public string GetHash(string absolutePath)
+        public string GetHash(string absoluteRootLocation)
         {
-            var s = WrapHtml(absolutePath);
+            var s = WrapHtml(absoluteRootLocation);
             string hash = CreateMD5(s);
             return hash;
         }
 
-        public virtual void BuildDirectories(string absolutePath)
+        public virtual void BuildHierarchy(string absoluteLocation, bool ignoreRoot = true)
         {
         }
     }

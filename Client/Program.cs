@@ -13,28 +13,32 @@ namespace Client
 {
     class Program
     {
-        public static string AbsoluteFolderPath = "C:\\Projects\\CSharp\\WebDisk\\Client\\bin\\Debug";
+        public static string FolderLocation = "C:\\Projects\\CSharp\\WebDisk\\Client\\bin\\Debug";
         public static string SharedFolderName = "shared";
+        public static string SharedFolderPath = Path.Combine(FolderLocation, SharedFolderName);
 
         static void Main(string[] args)
         {
-            if (!Directory.Exists(Path.Combine(AbsoluteFolderPath, SharedFolderName)))
+            if (!Directory.Exists(SharedFolderPath))
             {
+                Directory.CreateDirectory(SharedFolderPath);
                 Console.WriteLine($"{SharedFolderName} folder not found");
 
                 var treeCommand = SocketHandler.Request(IPAddress.Loopback, 11771)
                     .PerformCommand<ResponseGetTreeCommand>(new GetTreeCommand());
 
                 var remoteTreeRoot = treeCommand.GetData();
-                remoteTreeRoot.BuildDirectories(AbsoluteFolderPath);
-
-                // TODO: Full download
+                remoteTreeRoot.BuildHierarchy(SharedFolderPath);
+            }
+            else
+            {
+                Console.WriteLine($"Found {SharedFolderName} folder");
             }
 
             Console.WriteLine("Starting sync thread");
 
-            // Thread syncThread = new Thread(ThreadFunc);
-            // syncThread.Start();
+            Thread syncThread = new Thread(ThreadFunc);
+            syncThread.Start();
 
             // HelloCommand command = new HelloCommand("Hello, i am migga nigga");
             // Handler.PerformCommand(command);
@@ -49,11 +53,9 @@ namespace Client
         {
             while (Thread.CurrentThread.ThreadState != ThreadState.AbortRequested)
             {
-                TreeAnalyzer analyzer = new TreeAnalyzer();
-                analyzer.Retrieve(AbsoluteFolderPath);
-                var localTree = analyzer.GetTree();
+                var localTree = TreeAnalyzer.BuildTree(SharedFolderPath);
 
-                var hash = localTree.GetHash(Path.Combine(AbsoluteFolderPath, SharedFolderName));
+                var hash = localTree.GetHash(FolderLocation);
 
                 CompareHashCommand command = new CompareHashCommand(hash);
                 var socketHandler = SocketHandler.Request(IPAddress.Loopback, 11771);

@@ -9,25 +9,24 @@ namespace Entities.TreeNodes
     [Serializable]
     public class TreeFolderNode : TreeNode
     {
-        private List<TreeNode> m_children;
+        private List<TreeNode> _children;
 
         public TreeFolderNode(string name) : base(name)
         {
-            m_children = new List<TreeNode>();
+            _children = new List<TreeNode>();
         }
 
         public void AddChild(TreeNode child)
         {
-            m_children.Add(child);
-            m_size += child.GetSize();
+            _children.Add(child);
         }
 
-        public override string WrapHtml(string relativePath)
+        public override string WrapHtml(string absoluteLocation)
         {
             StringBuilder childrenHtmlBuilder = new StringBuilder();
-            foreach (var child in m_children)
+            foreach (var child in _children)
             {
-                childrenHtmlBuilder.Append(child.WrapHtml(Path.Combine(relativePath, m_name)));
+                childrenHtmlBuilder.AppendLine(child.WrapHtml(Path.Combine(absoluteLocation, GetName())));
             }
 
             string selfHtml = $"<li>{m_name}<ul>{childrenHtmlBuilder}</ul></li>";
@@ -35,12 +34,33 @@ namespace Entities.TreeNodes
             return selfHtml;
         }
 
-        public override void BuildDirectories(string absolutePath)
+        public override void BuildHierarchy(string absoluteLocation, bool ignoreRoot = true)
         {
-            Directory.CreateDirectory(Path.Combine(absolutePath, m_name));
-            foreach (var b in m_children.Where(t=>t is TreeFolderNode))
+            if (!ignoreRoot)
             {
-                b.BuildDirectories(Path.Combine(absolutePath, m_name));
+                Directory.CreateDirectory(Path.Combine(absoluteLocation, GetName()));
+
+                foreach (var b in _children.Where(t => t is TreeFolderNode))
+                {
+                    b.BuildHierarchy(Path.Combine(absoluteLocation, GetName()), false);
+                }
+
+                foreach (var b in _children.Where(t => t is TreeFileNode))
+                {
+                    b.BuildHierarchy(Path.Combine(absoluteLocation, GetName()));
+                }
+            }
+            else
+            {
+                foreach (var b in _children.Where(t => t is TreeFolderNode))
+                {
+                    b.BuildHierarchy(Path.Combine(absoluteLocation), false);
+                }
+
+                foreach (var b in _children.Where(t => t is TreeFileNode))
+                {
+                    b.BuildHierarchy(Path.Combine(absoluteLocation));
+                }
             }
         }
     }

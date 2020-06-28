@@ -23,10 +23,7 @@ namespace Server
 
         public TreeNode AsTreeNode()
         {
-            TreeAnalyzer analyzer = new TreeAnalyzer();
-            analyzer.Retrieve(_path);
-            var treeNode = analyzer.GetTree();
-            return treeNode;
+            return TreeAnalyzer.BuildTree(_path);
         }
     }
 }
