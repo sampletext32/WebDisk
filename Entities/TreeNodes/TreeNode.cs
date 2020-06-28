@@ -10,9 +10,21 @@ namespace Entities.TreeNodes
     {
         protected string m_name;
 
+        protected string _hash;
+
         public TreeNode(string name)
         {
             this.m_name = name;
+        }
+
+        public string GetHash()
+        {
+            return _hash;
+        }
+
+        public void SetHash(string hash)
+        {
+            _hash = hash;
         }
 
         public string GetName()
@@ -20,7 +32,12 @@ namespace Entities.TreeNodes
             return m_name;
         }
 
-        public virtual string WrapHtml(string relativePath)
+        public virtual string WrapHtml(string absoluteLocation)
+        {
+            return "";
+        }
+
+        public virtual string WrapHashedXML(string absoluteLocation, bool ignoreRoot = true)
         {
             return "";
         }
@@ -58,14 +75,16 @@ namespace Entities.TreeNodes
             }
         }
 
-        public string GetHash(string absoluteRootLocation)
+        public virtual string CalculateHash(string absoluteLocation)
         {
-            var s = WrapHtml(absoluteRootLocation);
-            string hash = CreateMD5(s);
-            return hash;
+            return "Unsupported call on base";
         }
 
         public virtual void BuildHierarchy(string absoluteLocation, bool ignoreRoot = true)
+        {
+        }
+
+        public virtual void Synchronize(TreeNode remoteNode, string absoluteLocation, bool ignoreRoot = true)
         {
         }
     }

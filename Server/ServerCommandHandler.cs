@@ -10,7 +10,8 @@ namespace Server
 {
     public class ServerCommandHandler
     {
-        private static SharedFolder _sharedFolder = new SharedFolder("C:\\Projects\\CSharp\\WebDisk\\Server\\bin\\Debug\\shared");
+        private static SharedFolder _sharedFolder =
+            new SharedFolder("C:\\Projects\\CSharp\\WebDisk\\Server\\bin\\Debug\\shared");
 
         public static SocketCommand Handle(SocketCommand command)
         {
@@ -23,7 +24,7 @@ namespace Server
             {
                 var path = _sharedFolder.GetPath();
                 var sharedFolderRoot = path.Substring(0, path.LastIndexOf(Path.DirectorySeparatorChar));
-                var treeEquals = _sharedFolder.AsTreeNode().GetHash(sharedFolderRoot) == compareHashCommand.GetData();
+                var treeEquals = _sharedFolder.AsTreeNode().CalculateHash(sharedFolderRoot) == compareHashCommand.GetData();
                 ResponseCompareHashCommand responseCompareCommand = new ResponseCompareHashCommand(treeEquals);
                 return responseCompareCommand;
             }
@@ -32,6 +33,16 @@ namespace Server
                 ResponseGetTreeCommand responseGetTreeCommand = new ResponseGetTreeCommand(_sharedFolder.AsTreeNode());
                 return responseGetTreeCommand;
             }
+            else if (command is GetHashXmlTreeCommand getHashXmlTreeCommand)
+            {
+                var path = _sharedFolder.GetPath();
+                var sharedFolderRoot = path.Substring(0, path.LastIndexOf(Path.DirectorySeparatorChar));
+                ResponseGetHashXmlTreeCommand responseGetHashXmlTreeCommand = new ResponseGetHashXmlTreeCommand(
+                    "<?xml version=\"1.0\" encoding=\"utf-8\" ?>" +
+                    _sharedFolder.AsTreeNode().WrapHashedXML(sharedFolderRoot));
+                return responseGetHashXmlTreeCommand;
+            }
+
             return new EmptyCommand();
         }
     }

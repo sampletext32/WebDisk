@@ -94,6 +94,7 @@ namespace Entities.TreeNodes
                     var fileName = innerFilePath.Substring(innerFilePath.LastIndexOf(Path.DirectorySeparatorChar) + 1);
                     LogBuilder.Get().AppendInfo($"Found File \"{fileName}\"");
                     TreeNode node = new TreeFileNode(fileName);
+                    node.SetHash(node.CalculateHash(localRoot));
                     currentFolderNode.AddChild(node);
                 }
             }

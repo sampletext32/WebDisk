@@ -118,4 +118,25 @@ namespace Entities
         {
         }
     }
+
+    [Serializable]
+    public class GetHashXmlTreeCommand : SocketCommand
+    {
+        public GetHashXmlTreeCommand() : base(null)
+        {
+        }
+    }
+
+    [Serializable]
+    public class ResponseGetHashXmlTreeCommand : SocketCommand
+    {
+        public string GetData()
+        {
+            return (string) Data;
+        }
+
+        public ResponseGetHashXmlTreeCommand(string data) : base(data)
+        {
+        }
+    }
 }

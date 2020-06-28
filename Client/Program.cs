@@ -55,18 +55,26 @@ namespace Client
             {
                 var localTree = TreeAnalyzer.BuildTree(SharedFolderPath);
 
-                var hash = localTree.GetHash(FolderLocation);
+                var hash = localTree.CalculateHash(FolderLocation);
 
-                CompareHashCommand command = new CompareHashCommand(hash);
+                CompareHashCommand compareHashCommand = new CompareHashCommand(hash);
                 var socketHandler = SocketHandler.Request(IPAddress.Loopback, 11771);
-                var commandResult = socketHandler.PerformCommand<ResponseCompareHashCommand>(command);
-                if (commandResult.GetData() == true)
+                var responseCompareHashCommand = socketHandler.PerformCommand<ResponseCompareHashCommand>(compareHashCommand);
+                if (responseCompareHashCommand.GetData() == true)
                 {
                     Console.WriteLine("Folders equals");
                 }
                 else
                 {
-                    Console.WriteLine("Found mismatch, perform sync");
+                    Console.WriteLine("Found mismatch, performing sync");
+                    GetHashXmlTreeCommand getHashXmlTreeCommand = new GetHashXmlTreeCommand();
+                    socketHandler = SocketHandler.Request(IPAddress.Loopback, 11771);
+                    var responseGetHashXmlTreeCommand = socketHandler.PerformCommand<ResponseGetHashXmlTreeCommand>(getHashXmlTreeCommand);
+
+                    var xmlTree = responseGetHashXmlTreeCommand.GetData();
+
+
+
                     // TODO: Sync
                 }
 
