@@ -27,6 +27,11 @@ namespace Server
                 ResponseCompareHashCommand responseCompareCommand = new ResponseCompareHashCommand(treeEquals);
                 return responseCompareCommand;
             }
+            else if (command is GetTreeCommand getTreeCommand)
+            {
+                ResponseGetTreeCommand responseGetTreeCommand = new ResponseGetTreeCommand(_sharedFolder.AsTreeNode());
+                return responseGetTreeCommand;
+            }
             return new EmptyCommand();
         }
     }

@@ -1,9 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 
 namespace Entities.TreeNodes
 {
+    [Serializable]
     public class TreeFolderNode : TreeNode
     {
         private List<TreeNode> m_children;
@@ -30,6 +33,15 @@ namespace Entities.TreeNodes
             string selfHtml = $"<li>{m_name}<ul>{childrenHtmlBuilder}</ul></li>";
 
             return selfHtml;
+        }
+
+        public override void BuildDirectories(string absolutePath)
+        {
+            Directory.CreateDirectory(Path.Combine(absolutePath, m_name));
+            foreach (var b in m_children.Where(t=>t is TreeFolderNode))
+            {
+                b.BuildDirectories(Path.Combine(absolutePath, m_name));
+            }
         }
     }
 }

@@ -5,6 +5,7 @@ using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Threading.Tasks;
+using Entities.TreeNodes;
 
 namespace Entities
 {
@@ -93,6 +94,27 @@ namespace Entities
         }
 
         public ResponseCompareHashCommand(bool data) : base(data)
+        {
+        }
+    }
+
+    [Serializable]
+    public class GetTreeCommand : SocketCommand
+    {
+        public GetTreeCommand() : base(null)
+        {
+        }
+    }
+
+    [Serializable]
+    public class ResponseGetTreeCommand : SocketCommand
+    {
+        public TreeNode GetData()
+        {
+            return (TreeNode) Data;
+        }
+
+        public ResponseGetTreeCommand(TreeNode data) : base(data)
         {
         }
     }

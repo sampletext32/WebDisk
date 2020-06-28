@@ -1,7 +1,9 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 
 namespace Entities.TreeNodes
 {
+    [Serializable]
     public class TreeFileNode : TreeNode
     {
         public TreeFileNode(string name, long size) : base(name)

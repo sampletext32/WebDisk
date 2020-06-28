@@ -1,9 +1,11 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Security.Cryptography;
 using System.Text;
 
 namespace Entities.TreeNodes
 {
+    [Serializable]
     public class TreeNode
     {
         protected string m_name;
@@ -67,6 +69,10 @@ namespace Entities.TreeNodes
             var s = WrapHtml(absolutePath);
             string hash = CreateMD5(s);
             return hash;
+        }
+
+        public virtual void BuildDirectories(string absolutePath)
+        {
         }
     }
 }

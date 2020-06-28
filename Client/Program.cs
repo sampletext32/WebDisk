@@ -13,21 +13,28 @@ namespace Client
 {
     class Program
     {
-        public static string AbsoluteFolderPath = "C:\\Projects\\CSharp\\WebDisk\\Client\\bin\\Debug\\shared";
+        public static string AbsoluteFolderPath = "C:\\Projects\\CSharp\\WebDisk\\Client\\bin\\Debug";
+        public static string SharedFolderName = "shared";
 
         static void Main(string[] args)
         {
-            if (!Directory.Exists("shared"))
+            if (!Directory.Exists(Path.Combine(AbsoluteFolderPath, SharedFolderName)))
             {
-                Console.WriteLine("shared folder not found");
-                Directory.CreateDirectory("shared");
+                Console.WriteLine($"{SharedFolderName} folder not found");
+
+                var treeCommand = SocketHandler.Request(IPAddress.Loopback, 11771)
+                    .PerformCommand<ResponseGetTreeCommand>(new GetTreeCommand());
+
+                var remoteTreeRoot = treeCommand.GetData();
+                remoteTreeRoot.BuildDirectories(AbsoluteFolderPath);
+
                 // TODO: Full download
             }
 
             Console.WriteLine("Starting sync thread");
 
-            Thread syncThread = new Thread(ThreadFunc);
-            syncThread.Start();
+            // Thread syncThread = new Thread(ThreadFunc);
+            // syncThread.Start();
 
             // HelloCommand command = new HelloCommand("Hello, i am migga nigga");
             // Handler.PerformCommand(command);
@@ -35,7 +42,7 @@ namespace Client
             Console.WriteLine("Press any key to exit!");
             Console.ReadKey();
 
-            syncThread.Abort();
+            // syncThread.Abort();
         }
 
         public static void ThreadFunc()
@@ -46,7 +53,7 @@ namespace Client
                 analyzer.Retrieve(AbsoluteFolderPath);
                 var localTree = analyzer.GetTree();
 
-                var hash = localTree.GetHash(AbsoluteFolderPath);
+                var hash = localTree.GetHash(Path.Combine(AbsoluteFolderPath, SharedFolderName));
 
                 CompareHashCommand command = new CompareHashCommand(hash);
                 var socketHandler = SocketHandler.Request(IPAddress.Loopback, 11771);
