@@ -13,12 +13,10 @@ namespace Client
     class Program
     {
         public static string Path;
-        private static SocketHandler Handler;
 
         static void Main(string[] args)
         {
             Path = "C:\\Projects\\CSharp\\WebDisk\\Client\\bin\\Debug\\shared";
-            Handler = new SocketHandler(IPAddress.Loopback, 11771);
 
             Thread syncThread = new Thread(ThreadFunc);
             syncThread.Start();
@@ -37,12 +35,13 @@ namespace Client
             {
                 TreeAnalyzer analyzer = new TreeAnalyzer(Path);
                 analyzer.Retrieve();
-                var treeNode = analyzer.GetTree();
+                var localTree = analyzer.GetTree();
 
-                var hash = treeNode.GetHash();
+                var hash = localTree.GetHash();
 
                 CompareHashCommand command = new CompareHashCommand(hash);
-                var commandResult = Handler.PerformCommand<ResponseCompareHashCommand>(command);
+                var socketHandler = SocketHandler.Request(IPAddress.Loopback, 11771);
+                var commandResult = socketHandler.PerformCommand<ResponseCompareHashCommand>(command);
                 if (commandResult.GetData() == true)
                 {
                     Console.WriteLine("Folders equals");

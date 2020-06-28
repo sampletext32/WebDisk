@@ -15,14 +15,18 @@ namespace Client
         private IPAddress _ipAddress;
         public int _port;
         private Socket _socket;
-        private byte[] _buffer;
 
         private IAsyncResult _connectResult;
 
-        public SocketHandler(IPAddress ipAddress, int port)
+        private SocketHandler(IPAddress ipAddress, int port)
         {
             _ipAddress = ipAddress;
             _port = port;
+        }
+        
+        public static SocketHandler Request(IPAddress ipAddress, int port)
+        {
+            return new SocketHandler(ipAddress, port);
         }
 
         public void Init()
@@ -40,7 +44,7 @@ namespace Client
             _socket.EndConnect(_connectResult);
         }
 
-        public T PerformCommand<T>(SocketCommand command)
+        public T PerformCommand<T>(SocketCommand command) where T : SocketCommand
         {
             var bytes = command.Serialize();
 
@@ -64,11 +68,10 @@ namespace Client
             return response;
         }
 
-        private T ProcessResponse<T>(byte[] data)
+        private T ProcessResponse<T>(byte[] data) where T : SocketCommand
         {
             var socketCommand = SocketCommand.Deserialize(data);
-            var responseCommand = ClientCommandHandler.Upcast(socketCommand);
-            return (T)responseCommand;
+            return (T) socketCommand;
         }
     }
 }
