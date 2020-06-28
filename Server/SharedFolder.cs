@@ -10,17 +10,21 @@ namespace Server
     public class SharedFolder
     {
         private string _path;
-        private string _hash;
 
         public SharedFolder(string path)
         {
             _path = path;
         }
 
+        public string GetPath()
+        {
+            return _path;
+        }
+
         public TreeNode AsTreeNode()
         {
-            TreeAnalyzer analyzer = new TreeAnalyzer(_path);
-            analyzer.Retrieve();
+            TreeAnalyzer analyzer = new TreeAnalyzer();
+            analyzer.Retrieve(_path);
             var treeNode = analyzer.GetTree();
             return treeNode;
         }

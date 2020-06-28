@@ -19,19 +19,24 @@ namespace Entities.TreeNodes
             return m_size;
         }
 
-        public virtual string WrapHtml()
+        public string GetName()
+        {
+            return m_name;
+        }
+
+        public virtual string WrapHtml(string relativePath)
         {
             return "";
         }
 
-        private static string CreateMD5(string input)
+        protected static string CreateMD5(string input)
         {
             using (MD5 md5 = MD5.Create())
             {
                 byte[] inputBytes = Encoding.UTF8.GetBytes(input);
                 byte[] hashBytes = md5.ComputeHash(inputBytes);
 
-                StringBuilder sb = new StringBuilder();
+                StringBuilder sb = new StringBuilder(32);
                 for (int i = 0; i < hashBytes.Length; i++)
                 {
                     sb.Append(hashBytes[i].ToString("X2"));
@@ -41,13 +46,13 @@ namespace Entities.TreeNodes
             }
         }
 
-        private static string CreateMD5(Stream input)
+        protected static string CreateMD5(Stream input)
         {
             using (MD5 md5 = MD5.Create())
             {
                 byte[] hashBytes = md5.ComputeHash(input);
 
-                StringBuilder sb = new StringBuilder();
+                StringBuilder sb = new StringBuilder(32);
                 for (int i = 0; i < hashBytes.Length; i++)
                 {
                     sb.Append(hashBytes[i].ToString("X2"));
@@ -57,9 +62,9 @@ namespace Entities.TreeNodes
             }
         }
 
-        public string GetHash()
+        public string GetHash(string absolutePath)
         {
-            var s = WrapHtml();
+            var s = WrapHtml(absolutePath);
             string hash = CreateMD5(s);
             return hash;
         }

@@ -1,4 +1,6 @@
-﻿namespace Entities.TreeNodes
+﻿using System.IO;
+
+namespace Entities.TreeNodes
 {
     public class TreeFileNode : TreeNode
     {
@@ -7,9 +9,14 @@
             m_size = size;
         }
 
-        public override string WrapHtml()
+        public override string WrapHtml(string relativePath)
         {
-            string selfHtml = $"<li>{m_name} - {GetSize()} bytes</li>";
+            string hash;
+            using (FileStream stream = new FileStream(Path.Combine(relativePath, m_name), FileMode.Open))
+            {
+                hash = CreateMD5(stream);
+            }
+            string selfHtml = $"<li>{hash}</li>";
 
             return selfHtml;
         }

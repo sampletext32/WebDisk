@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -20,7 +21,9 @@ namespace Server
             }
             else if (command is CompareHashCommand compareHashCommand)
             {
-                var treeEquals = _sharedFolder.AsTreeNode().GetHash() == compareHashCommand.GetData();
+                var path = _sharedFolder.GetPath();
+                var sharedFolderRoot = path.Substring(0, path.LastIndexOf(Path.DirectorySeparatorChar));
+                var treeEquals = _sharedFolder.AsTreeNode().GetHash(sharedFolderRoot) == compareHashCommand.GetData();
                 ResponseCompareHashCommand responseCompareCommand = new ResponseCompareHashCommand(treeEquals);
                 return responseCompareCommand;
             }

@@ -5,34 +5,23 @@ namespace Entities.TreeNodes
 {
     public class TreeAnalyzer
     {
-        private string m_rootPath;
-        private int m_maxNestingLevel;
-
         private TreeNode m_tree;
+
+        public TreeAnalyzer()
+        {
+        }
 
         public bool IsTreeAvailable()
         {
             return m_tree != null;
         }
 
-        public TreeAnalyzer(string rootPath, int maxNestingLevel = int.MaxValue)
-        {
-            SetNestingLevel(maxNestingLevel);
-            if (rootPath == string.Empty)
-            {
-                throw new ArgumentNullException("rootPath was empty");
-            }
-
-            m_rootPath = rootPath;
-            m_tree = null;
-        }
-
-        public void Retrieve()
+        public void Retrieve(string absoluteFolderPath)
         {
             LogBuilder.Get()
                 .AppendInfo(
-                    $"Started FileTree Retrieving At \"{m_rootPath}\" With Nesting Level {(m_maxNestingLevel == int.MaxValue ? "Unlimited" : m_maxNestingLevel.ToString())}");
-            m_tree = RetrieveFolder(m_rootPath, 1);
+                    $"Started FileTree Retrieving At \"{absoluteFolderPath}");
+            m_tree = RetrieveFolder(absoluteFolderPath, "");
         }
 
         public TreeNode GetTree()
@@ -46,61 +35,64 @@ namespace Entities.TreeNodes
             return m_tree;
         }
 
-        private TreeNode RetrieveFolder(string absolutePath, int nestingLevel)
+        private TreeNode RetrieveFolder(string analyzingRoot, string relativePath)
         {
-            if (!PathIsDirectory(absolutePath))
+            string localRoot = Path.Combine(analyzingRoot, relativePath);
+            if (!PathIsDirectory(localRoot))
             {
-                LogBuilder.Get().AppendError($"Attempted to retrieve folder with invalid path \"{absolutePath}\"");
-                throw new ArgumentException("Folder With Invalid Path Found");//Not Possible In Real Scenario
+                LogBuilder.Get().AppendError($"Attempted to retrieve folder with invalid path \"{localRoot}\"");
+                throw new ArgumentException("Folder With Invalid Path Found"); //Not Possible In Real Scenario
             }
 
-            string currentFolderName = absolutePath.Length == 3
-                ? absolutePath
-                : absolutePath.Substring(absolutePath.LastIndexOf(Path.DirectorySeparatorChar));
+            string currentFolderName;
+            if (localRoot.Length == 3)
+            {
+                // C:\
+                currentFolderName = localRoot;
+            }
+            else
+            {
+                // Any folder 
+                currentFolderName = localRoot.Substring(localRoot.LastIndexOf(Path.DirectorySeparatorChar) + 1);
+            }
 
             TreeFolderNode currentFolderNode = new TreeFolderNode(currentFolderName);
 
-            string currentFolderPath = Path.Combine(m_rootPath, absolutePath);
-
-            if (nestingLevel > m_maxNestingLevel)
-            {
-                LogBuilder.Get().AppendInfo($"Reached Nesting Limit At {currentFolderPath}");
-                return currentFolderNode;
-            }
-
             try
             {
-                var innerDirectoriesPaths = Directory.EnumerateDirectories(currentFolderPath);
+                var innerDirectoriesPaths = Directory.EnumerateDirectories(localRoot);
 
                 foreach (var innerDirectoryPath in innerDirectoriesPaths)
                 {
+                    var folderName =
+                        innerDirectoryPath.Substring(innerDirectoryPath.LastIndexOf(Path.DirectorySeparatorChar) + 1);
+
                     LogBuilder.Get().AppendInfo($"Found Folder \"{innerDirectoryPath}\"");
-                    TreeNode folderNode = RetrieveFolder(
-                        innerDirectoryPath,
-                        nestingLevel + 1);
+
+                    TreeNode folderNode = RetrieveFolder(analyzingRoot, Path.Combine(localRoot, folderName));
                     currentFolderNode.AddChild(folderNode);
                 }
             }
             catch
             {
-                LogBuilder.Get().AppendError($"Unable to get folders in {currentFolderPath}");
+                LogBuilder.Get().AppendError($"Unable to get folders in {localRoot}");
             }
 
             try
             {
-                var innerFilesPaths = Directory.EnumerateFiles(currentFolderPath);
+                var innerFilesPaths = Directory.EnumerateFiles(localRoot);
 
                 foreach (var innerFilePath in innerFilesPaths)
                 {
-                    LogBuilder.Get().AppendInfo($"Found File \"{innerFilePath}\"");
-                    TreeNode node = new TreeFileNode(Path.GetFileName(innerFilePath),
-                        new FileInfo(innerFilePath).Length);
+                    var fileName = innerFilePath.Substring(innerFilePath.LastIndexOf(Path.DirectorySeparatorChar) + 1);
+                    LogBuilder.Get().AppendInfo($"Found File \"{fileName}\"");
+                    TreeNode node = new TreeFileNode(fileName, new FileInfo(innerFilePath).Length);
                     currentFolderNode.AddChild(node);
                 }
             }
             catch
             {
-                LogBuilder.Get().AppendError($"Unable to get files in {currentFolderPath}");
+                LogBuilder.Get().AppendError($"Unable to get files in {localRoot}");
             }
 
             return currentFolderNode;
@@ -110,16 +102,6 @@ namespace Entities.TreeNodes
         {
             FileAttributes fa = File.GetAttributes(path);
             return fa.HasFlag(FileAttributes.Directory);
-        }
-
-        public void SetNestingLevel(int nestingLevel)
-        {
-            if (nestingLevel < 0)
-            {
-                throw new ArgumentOutOfRangeException("nestingLevel can't be negative");
-            }
-
-            m_maxNestingLevel = nestingLevel;
         }
     }
 }
