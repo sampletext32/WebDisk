@@ -8,35 +8,15 @@ namespace Entities.TreeNodes
     [Serializable]
     public class TreeNode
     {
-        protected string _name;
+        public string Name { get; set; }
 
-        protected string _relativeLocation;
+        public string RelativeLocation { get; set; }
 
-        protected string _hash;
+        public string Hash { get; set; }
 
         public TreeNode(string name)
         {
-            this._name = name;
-        }
-
-        public string GetHash()
-        {
-            return _hash;
-        }
-
-        public void SetHash(string hash)
-        {
-            _hash = hash;
-        }
-
-        public string GetName()
-        {
-            return _name;
-        }
-
-        public void SetRelativeLocation(string relativePath)
-        {
-            _relativeLocation = relativePath;
+            this.Name = name;
         }
 
         public virtual string WrapHtml(string absoluteLocation)

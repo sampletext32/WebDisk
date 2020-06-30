@@ -13,12 +13,12 @@ namespace Entities.TreeNodes
         public override string CalculateHash(string absoluteLocation)
         {
             string hash;
-            using (FileStream stream = new FileStream(Path.Combine(absoluteLocation, GetName()), FileMode.Open))
+            using (FileStream stream = new FileStream(Path.Combine(absoluteLocation, Name), FileMode.Open))
             {
                 hash = CreateMD5(stream);
             }
 
-            SetHash(hash);
+            Hash = hash;
             return hash;
         }
 
@@ -40,7 +40,7 @@ namespace Entities.TreeNodes
 
         public override void BuildHierarchy(string absoluteLocation, bool ignoreRoot = true)
         {
-            File.Create(Path.Combine(absoluteLocation, GetName())).Close();
+            File.Create(Path.Combine(absoluteLocation, Name)).Close();
         }
 
         public override void Download(TreeNode remoteNode, string absoluteLocation, bool ignoreRoot = true)

@@ -26,10 +26,10 @@ namespace Entities.TreeNodes
             StringBuilder childrenHtmlBuilder = new StringBuilder();
             foreach (var child in _children)
             {
-                childrenHtmlBuilder.AppendLine(child.WrapHtml(Path.Combine(absoluteLocation, GetName())));
+                childrenHtmlBuilder.AppendLine(child.WrapHtml(Path.Combine(absoluteLocation, Name)));
             }
 
-            string selfHtml = $"<li>{GetName()}<ul>{childrenHtmlBuilder}</ul></li>";
+            string selfHtml = $"<li>{Name}<ul>{childrenHtmlBuilder}</ul></li>";
 
             return selfHtml;
         }
@@ -39,7 +39,7 @@ namespace Entities.TreeNodes
             StringBuilder childrenHtmlBuilder = new StringBuilder();
             foreach (var child in _children)
             {
-                childrenHtmlBuilder.Append(child.WrapHashedXML(Path.Combine(absoluteLocation, GetName()), false));
+                childrenHtmlBuilder.Append(child.WrapHashedXML(Path.Combine(absoluteLocation, Name), false));
             }
 
             string selfHtml;
@@ -49,7 +49,7 @@ namespace Entities.TreeNodes
             }
             else
             {
-                selfHtml = $"<folder><name>{GetName()}</name><items>{childrenHtmlBuilder}</items></folder>";
+                selfHtml = $"<folder><name>{Name}</name><items>{childrenHtmlBuilder}</items></folder>";
             }
 
             return selfHtml;
@@ -59,16 +59,16 @@ namespace Entities.TreeNodes
         {
             if (!ignoreRoot)
             {
-                Directory.CreateDirectory(Path.Combine(absoluteLocation, GetName()));
+                Directory.CreateDirectory(Path.Combine(absoluteLocation, Name));
 
                 foreach (var b in _children.Where(t => t is TreeFolderNode))
                 {
-                    b.BuildHierarchy(Path.Combine(absoluteLocation, GetName()), false);
+                    b.BuildHierarchy(Path.Combine(absoluteLocation, Name), false);
                 }
 
                 foreach (var b in _children.Where(t => t is TreeFileNode))
                 {
-                    b.BuildHierarchy(Path.Combine(absoluteLocation, GetName()));
+                    b.BuildHierarchy(Path.Combine(absoluteLocation, Name));
                 }
             }
             else
@@ -87,22 +87,22 @@ namespace Entities.TreeNodes
 
         public override void Download(TreeNode remoteNode, string absoluteLocation, bool ignoreRoot = true)
         {
-            Directory.Delete(Path.Combine(absoluteLocation, GetName()), true);
-            Directory.CreateDirectory(Path.Combine(absoluteLocation, GetName()));
+            Directory.Delete(Path.Combine(absoluteLocation, Name), true);
+            Directory.CreateDirectory(Path.Combine(absoluteLocation, Name));
             if (!ignoreRoot)
             {
                 var treeFolderNode = remoteNode as TreeFolderNode;
 
                 foreach (var b in treeFolderNode._children.Where(t => t is TreeFolderNode))
                 {
-                    TreeNode folderNode = new TreeFolderNode(b.GetName());
-                    folderNode.Download(b, Path.Combine(absoluteLocation, GetName()), false);
+                    TreeNode folderNode = new TreeFolderNode(b.Name);
+                    folderNode.Download(b, Path.Combine(absoluteLocation, Name), false);
                 }
 
                 foreach (var b in treeFolderNode._children.Where(t => t is TreeFileNode))
                 {
-                    TreeNode fileNode = new TreeFileNode(b.GetName());
-                    fileNode.Download(b, Path.Combine(absoluteLocation, GetName()));
+                    TreeNode fileNode = new TreeFileNode(b.Name);
+                    fileNode.Download(b, Path.Combine(absoluteLocation, Name));
                 }
             }
             else
@@ -111,13 +111,13 @@ namespace Entities.TreeNodes
 
                 foreach (var b in treeFolderNode._children.Where(t => t is TreeFolderNode))
                 {
-                    TreeNode folderNode = new TreeFolderNode(b.GetName());
+                    TreeNode folderNode = new TreeFolderNode(b.Name);
                     folderNode.Download(b, Path.Combine(absoluteLocation), false);
                 }
 
                 foreach (var b in treeFolderNode._children.Where(t => t is TreeFileNode))
                 {
-                    TreeNode fileNode = new TreeFileNode(b.GetName());
+                    TreeNode fileNode = new TreeFileNode(b.Name);
                     fileNode.Download(b, Path.Combine(absoluteLocation));
                 }
             }
@@ -132,7 +132,7 @@ namespace Entities.TreeNodes
             foreach (var localFolderFile in localFolderFiles)
             {
                 // Проверяем наличие такого файла по имени
-                var remotePairByName = remoteFolderFiles.FirstOrDefault(t => t.GetName() == localFolderFile.GetName());
+                var remotePairByName = remoteFolderFiles.FirstOrDefault(t => t.Name == localFolderFile.Name);
 
                 if (remotePairByName == null)
                 {
@@ -144,7 +144,7 @@ namespace Entities.TreeNodes
                 {
                     // Найден файл с таким же именем
 
-                    if (remotePairByName.GetHash() == localFolderFile.GetHash())
+                    if (remotePairByName.Hash== localFolderFile.Hash)
                     {
                         // Если хеш файла одинаковый - файл с таким именем не изменился, игнорируем его инхронизацию
                     }
