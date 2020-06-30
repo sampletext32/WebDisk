@@ -8,13 +8,15 @@ namespace Entities.TreeNodes
     [Serializable]
     public class TreeNode
     {
-        protected string m_name;
+        protected string _name;
+
+        protected string _relativeLocation;
 
         protected string _hash;
 
         public TreeNode(string name)
         {
-            this.m_name = name;
+            this._name = name;
         }
 
         public string GetHash()
@@ -29,7 +31,12 @@ namespace Entities.TreeNodes
 
         public string GetName()
         {
-            return m_name;
+            return _name;
+        }
+
+        public void SetRelativePath(string relativePath)
+        {
+            _relativeLocation = relativePath;
         }
 
         public virtual string WrapHtml(string absoluteLocation)
@@ -90,7 +97,6 @@ namespace Entities.TreeNodes
 
         public virtual void Download(TreeNode remoteNode, string absoluteLocation, bool ignoreRoot = true)
         {
-
         }
     }
 }

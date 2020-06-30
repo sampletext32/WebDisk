@@ -42,32 +42,33 @@ namespace Entities.TreeNodes
             return _tree;
         }
 
-        private TreeNode RetrieveFolder(string analyzingRoot, string relativePath)
+        private TreeNode RetrieveFolder(string absoluteRootLocation, string relativePath)
         {
-            string localRoot = Path.Combine(analyzingRoot, relativePath);
-            if (!PathIsDirectory(localRoot))
+            string absoluteLocation = Path.Combine(absoluteRootLocation, relativePath);
+            if (!PathIsDirectory(absoluteLocation))
             {
-                LogBuilder.Get().AppendError($"Attempted to retrieve folder with invalid path \"{localRoot}\"");
+                LogBuilder.Get().AppendError($"Attempted to retrieve folder with invalid path \"{absoluteLocation}\"");
                 throw new ArgumentException("Folder With Invalid Path Found"); //Not Possible In Real Scenario
             }
 
             string currentFolderName;
-            if (localRoot.Length == 3)
+            if (absoluteLocation.Length == 3)
             {
                 // C:\
-                currentFolderName = localRoot;
+                currentFolderName = absoluteLocation;
             }
             else
             {
                 // Any folder 
-                currentFolderName = localRoot.Substring(localRoot.LastIndexOf(Path.DirectorySeparatorChar) + 1);
+                currentFolderName = absoluteLocation.Substring(absoluteLocation.LastIndexOf(Path.DirectorySeparatorChar) + 1);
             }
 
             TreeFolderNode currentFolderNode = new TreeFolderNode(currentFolderName);
+            currentFolderNode.SetRelativePath(relativePath);
 
             try
             {
-                var innerDirectoriesPaths = Directory.EnumerateDirectories(localRoot);
+                var innerDirectoriesPaths = Directory.EnumerateDirectories(absoluteLocation);
 
                 foreach (var innerDirectoryPath in innerDirectoriesPaths)
                 {
@@ -76,31 +77,32 @@ namespace Entities.TreeNodes
 
                     LogBuilder.Get().AppendInfo($"Found Folder \"{innerDirectoryPath}\"");
 
-                    TreeNode folderNode = RetrieveFolder(analyzingRoot, Path.Combine(localRoot, folderName));
+                    TreeNode folderNode = RetrieveFolder(absoluteRootLocation, Path.Combine(relativePath, folderName));
                     currentFolderNode.AddChild(folderNode);
                 }
             }
             catch
             {
-                LogBuilder.Get().AppendError($"Unable to get folders in {localRoot}");
+                LogBuilder.Get().AppendError($"Unable to get folders in {absoluteLocation}");
             }
 
             try
             {
-                var innerFilesPaths = Directory.EnumerateFiles(localRoot);
+                var innerFilesPaths = Directory.EnumerateFiles(absoluteLocation);
 
                 foreach (var innerFilePath in innerFilesPaths)
                 {
                     var fileName = innerFilePath.Substring(innerFilePath.LastIndexOf(Path.DirectorySeparatorChar) + 1);
                     LogBuilder.Get().AppendInfo($"Found File \"{fileName}\"");
                     TreeNode node = new TreeFileNode(fileName);
-                    node.CalculateHash(localRoot);
+                    node.CalculateHash(absoluteLocation);
+                    node.SetRelativePath(Path.Combine(relativePath, fileName));
                     currentFolderNode.AddChild(node);
                 }
             }
             catch
             {
-                LogBuilder.Get().AppendError($"Unable to get files in {localRoot}");
+                LogBuilder.Get().AppendError($"Unable to get files in {absoluteLocation}");
             }
 
             return currentFolderNode;
