@@ -73,7 +73,7 @@ namespace Client
 
                     var xmlTree = responseGetHashXmlTreeCommand.GetData();
 
-
+                    
 
                     // TODO: Sync
                 }

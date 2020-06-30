@@ -42,5 +42,10 @@ namespace Entities.TreeNodes
         {
             File.Create(Path.Combine(absoluteLocation, GetName())).Close();
         }
+
+        public override void Download(TreeNode remoteNode, string absoluteLocation, bool ignoreRoot = true)
+        {
+
+        }
     }
 }

@@ -87,5 +87,10 @@ namespace Entities.TreeNodes
         public virtual void Synchronize(TreeNode remoteNode, string absoluteLocation, bool ignoreRoot = true)
         {
         }
+
+        public virtual void Download(TreeNode remoteNode, string absoluteLocation, bool ignoreRoot = true)
+        {
+
+        }
     }
 }
