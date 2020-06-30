@@ -34,7 +34,7 @@ namespace Entities.TreeNodes
             return _name;
         }
 
-        public void SetRelativePath(string relativePath)
+        public void SetRelativeLocation(string relativePath)
         {
             _relativeLocation = relativePath;
         }

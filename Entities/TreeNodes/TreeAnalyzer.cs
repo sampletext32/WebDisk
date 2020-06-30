@@ -64,7 +64,7 @@ namespace Entities.TreeNodes
             }
 
             TreeFolderNode currentFolderNode = new TreeFolderNode(currentFolderName);
-            currentFolderNode.SetRelativePath(relativePath);
+            currentFolderNode.SetRelativeLocation(relativePath);
 
             try
             {
@@ -96,7 +96,7 @@ namespace Entities.TreeNodes
                     LogBuilder.Get().AppendInfo($"Found File \"{fileName}\"");
                     TreeNode node = new TreeFileNode(fileName);
                     node.CalculateHash(absoluteLocation);
-                    node.SetRelativePath(Path.Combine(relativePath, fileName));
+                    node.SetRelativeLocation(Path.Combine(relativePath, fileName));
                     currentFolderNode.AddChild(node);
                 }
             }
