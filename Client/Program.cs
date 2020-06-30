@@ -53,7 +53,7 @@ namespace Client
         {
             while (Thread.CurrentThread.ThreadState != ThreadState.AbortRequested)
             {
-                var localTree = TreeAnalyzer.BuildTree(SharedFolderPath);
+                var localTree = TreeAnalyzer.BuildTree(FolderLocation, SharedFolderName);
 
                 var hash = localTree.CalculateHash(FolderLocation);
 

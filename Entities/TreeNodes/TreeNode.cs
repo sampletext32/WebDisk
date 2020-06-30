@@ -78,5 +78,10 @@ namespace Entities.TreeNodes
         public virtual void Download(TreeNode remoteNode, string absoluteLocation, bool ignoreRoot = true)
         {
         }
+
+        public override string ToString()
+        {
+            return Path.Combine(RelativeLocation, Name);
+        }
     }
 }

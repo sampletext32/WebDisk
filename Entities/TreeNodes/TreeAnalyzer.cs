@@ -16,18 +16,16 @@ namespace Entities.TreeNodes
             return _tree != null;
         }
 
-        public static TreeNode BuildTree(string absolutePath)
+        public static TreeNode BuildTree(string absoluteFolderLocation, string folderName)
         {
             TreeAnalyzer analyzer = new TreeAnalyzer();
-            analyzer.Retrieve(absolutePath);
+            analyzer.Retrieve(absoluteFolderLocation, folderName);
             return analyzer.GetTree();
         }
 
-        public void Retrieve(string absoluteFolderPath)
+        public void Retrieve(string absoluteFolderLocation, string folderName)
         {
-            var folderName =
-                absoluteFolderPath.Substring(absoluteFolderPath.LastIndexOf(Path.DirectorySeparatorChar) + 1);
-            _tree = RetrieveFolder(absoluteFolderPath, "", folderName);
+            _tree = RetrieveFolder(absoluteFolderLocation, "", folderName);
         }
 
         public TreeNode GetTree()
@@ -42,8 +40,7 @@ namespace Entities.TreeNodes
 
         private TreeNode RetrieveFolder(string absoluteRootLocation, string relativeLocation, string name)
         {
-            string absoluteLocation = Path.Combine(absoluteRootLocation, relativeLocation);
-            if (!PathIsDirectory(absoluteLocation))
+            if (!PathIsDirectory(Path.Combine(absoluteRootLocation, relativeLocation, name)))
             {
                 throw new ArgumentException("Folder With Invalid Path Found"); //Not Possible In Real Scenario
             }
@@ -53,17 +50,17 @@ namespace Entities.TreeNodes
 
             try
             {
-                var innerDirectoriesPaths = Directory.EnumerateDirectories(absoluteLocation);
+                var innerDirectoriesPaths =
+                    Directory.EnumerateDirectories(Path.Combine(absoluteRootLocation, relativeLocation, name));
 
                 foreach (var innerDirectoryPath in innerDirectoriesPaths)
                 {
                     var folderName =
                         innerDirectoryPath.Substring(innerDirectoryPath.LastIndexOf(Path.DirectorySeparatorChar) + 1);
 
-                    LogBuilder.Get().AppendInfo($"Found Folder \"{innerDirectoryPath}\"");
-
                     TreeNode folderNode =
-                        RetrieveFolder(absoluteRootLocation, Path.Combine(relativeLocation), folderName);
+                        RetrieveFolder(absoluteRootLocation, Path.Combine(relativeLocation, name), folderName);
+
                     currentFolderNode.AddChild(folderNode);
                 }
             }
@@ -73,14 +70,16 @@ namespace Entities.TreeNodes
 
             try
             {
-                var innerFilesPaths = Directory.EnumerateFiles(absoluteLocation);
+                var innerFilesPaths =
+                    Directory.EnumerateFiles(Path.Combine(absoluteRootLocation, relativeLocation, name));
 
                 foreach (var innerFilePath in innerFilesPaths)
                 {
                     var fileName = innerFilePath.Substring(innerFilePath.LastIndexOf(Path.DirectorySeparatorChar) + 1);
+
                     TreeNode node = new TreeFileNode(fileName);
-                    node.CalculateHash(absoluteLocation);
-                    node.RelativeLocation = Path.Combine(relativeLocation);
+                    node.RelativeLocation = Path.Combine(relativeLocation, name);
+                    node.CalculateHash(Path.Combine(absoluteRootLocation, relativeLocation, name));
                     currentFolderNode.AddChild(node);
                 }
             }
