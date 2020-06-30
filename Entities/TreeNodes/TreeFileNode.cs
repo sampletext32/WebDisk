@@ -18,6 +18,7 @@ namespace Entities.TreeNodes
                 hash = CreateMD5(stream);
             }
 
+            SetHash(hash);
             return hash;
         }
 
