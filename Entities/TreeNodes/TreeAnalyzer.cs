@@ -25,9 +25,6 @@ namespace Entities.TreeNodes
 
         public void Retrieve(string absoluteFolderPath)
         {
-            LogBuilder.Get()
-                .AppendInfo(
-                    $"Started FileTree Retrieving At \"{absoluteFolderPath}");
             var folderName =
                 absoluteFolderPath.Substring(absoluteFolderPath.LastIndexOf(Path.DirectorySeparatorChar) + 1);
             _tree = RetrieveFolder(absoluteFolderPath, "", folderName);
@@ -37,7 +34,6 @@ namespace Entities.TreeNodes
         {
             if (!IsTreeAvailable())
             {
-                LogBuilder.Get().AppendError("Attempted To Get File Tree When Not Retrieved");
                 throw new InvalidOperationException("Tree Is Not Retrieved");
             }
 
@@ -49,7 +45,6 @@ namespace Entities.TreeNodes
             string absoluteLocation = Path.Combine(absoluteRootLocation, relativeLocation);
             if (!PathIsDirectory(absoluteLocation))
             {
-                LogBuilder.Get().AppendError($"Attempted to retrieve folder with invalid path \"{absoluteLocation}\"");
                 throw new ArgumentException("Folder With Invalid Path Found"); //Not Possible In Real Scenario
             }
 
@@ -74,7 +69,6 @@ namespace Entities.TreeNodes
             }
             catch
             {
-                LogBuilder.Get().AppendError($"Unable to get folders in {absoluteLocation}");
             }
 
             try
@@ -84,7 +78,6 @@ namespace Entities.TreeNodes
                 foreach (var innerFilePath in innerFilesPaths)
                 {
                     var fileName = innerFilePath.Substring(innerFilePath.LastIndexOf(Path.DirectorySeparatorChar) + 1);
-                    LogBuilder.Get().AppendInfo($"Found File \"{fileName}\"");
                     TreeNode node = new TreeFileNode(fileName);
                     node.CalculateHash(absoluteLocation);
                     node.RelativeLocation = Path.Combine(relativeLocation);
@@ -93,7 +86,6 @@ namespace Entities.TreeNodes
             }
             catch
             {
-                LogBuilder.Get().AppendError($"Unable to get files in {absoluteLocation}");
             }
 
             return currentFolderNode;
