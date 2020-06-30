@@ -55,11 +55,11 @@ namespace Entities.TreeNodes
 
                 foreach (var innerDirectoryPath in innerDirectoriesPaths)
                 {
-                    var folderName =
+                    var innerFolderName =
                         innerDirectoryPath.Substring(innerDirectoryPath.LastIndexOf(Path.DirectorySeparatorChar) + 1);
 
                     TreeNode folderNode =
-                        RetrieveFolder(absoluteRootLocation, Path.Combine(relativeLocation, name), folderName);
+                        RetrieveFolder(absoluteRootLocation, Path.Combine(relativeLocation, name), innerFolderName);
 
                     currentFolderNode.AddChild(folderNode);
                 }

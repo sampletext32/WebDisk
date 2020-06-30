@@ -144,7 +144,7 @@ namespace Entities.TreeNodes
                 {
                     // Найден файл с таким же именем
 
-                    if (remotePairByName.Hash== localFolderFile.Hash)
+                    if (remotePairByName.Hash == localFolderFile.Hash)
                     {
                         // Если хеш файла одинаковый - файл с таким именем не изменился, игнорируем его инхронизацию
                     }
