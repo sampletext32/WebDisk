@@ -120,22 +120,83 @@ namespace Entities
     }
 
     [Serializable]
-    public class GetHashXmlTreeCommand : SocketCommand
+    public class FileSizeData
     {
-        public GetHashXmlTreeCommand() : base(null)
+        public string RelativeLocation { get; set; }
+        public string Name { get; set; }
+
+        public FileSizeData(string relativeLocation, string name)
+        {
+            RelativeLocation = relativeLocation;
+            Name = name;
+        }
+    }
+
+    [Serializable]
+    public class GetFileSizeCommand : SocketCommand
+    {
+        public FileSizeData GetData()
+        {
+            return (FileSizeData) Data;
+        }
+
+        public GetFileSizeCommand(FileSizeData fileSizeData) : base(fileSizeData)
         {
         }
     }
 
     [Serializable]
-    public class ResponseGetHashXmlTreeCommand : SocketCommand
+    public class ResponseGetFileSizeCommand : SocketCommand
     {
-        public string GetData()
+        public int GetData()
         {
-            return (string) Data;
+            return (int) Data;
         }
 
-        public ResponseGetHashXmlTreeCommand(string data) : base(data)
+        public ResponseGetFileSizeCommand(int size) : base(size)
+        {
+        }
+    }
+
+    [Serializable]
+    public class FilePieceData
+    {
+        public string RelativeLocation { get; set; }
+        public string Name { get; set; }
+        public int Offset { get; set; }
+        public int Size { get; set; }
+
+        public FilePieceData(string relativeLocation, string name, int offset, int size)
+        {
+            RelativeLocation = relativeLocation;
+            Name = name;
+            Offset = offset;
+            Size = size;
+        }
+    }
+
+    [Serializable]
+    public class GetFilePieceCommand : SocketCommand
+    {
+        public FilePieceData GetData()
+        {
+            return (FilePieceData) Data;
+        }
+
+        public GetFilePieceCommand(FilePieceData filePieceData) : base(filePieceData)
+        {
+        }
+    }
+
+    [Serializable]
+    public class ResponseGetFilePieceCommand : SocketCommand
+    {
+        public byte[] GetData()
+        {
+            return (byte[]) Data;
+        }
+
+        public ResponseGetFilePieceCommand(byte[] piece) : base(piece)
         {
         }
     }
