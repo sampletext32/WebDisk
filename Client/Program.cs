@@ -13,8 +13,8 @@ namespace Client
 {
     class Program
     {
-        public static string SharedFolderLocation = "C:\\Projects\\CSharp\\WebDisk\\Client\\bin\\Debug";
-        public static string SharedFolderName = "shared";
+        public static readonly string SharedFolderLocation = "C:\\Projects\\CSharp\\WebDisk\\Client\\bin\\Debug";
+        public static readonly string SharedFolderName = "shared";
 
         static void Main(string[] args)
         {
@@ -45,7 +45,7 @@ namespace Client
             Console.WriteLine("Press any key to exit!");
             Console.ReadKey();
 
-            // syncThread.Abort();
+            syncThread.Abort();
         }
 
         public static void ThreadFunc()
