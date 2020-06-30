@@ -54,7 +54,7 @@ namespace Entities.TreeNodes
             }
         }
 
-        protected static string CreateMD5(Stream input)
+        public static string CreateMD5(Stream input)
         {
             using (MD5 md5 = MD5.Create())
             {

@@ -41,7 +41,7 @@ namespace Entities.TreeNodes
 
         public override void Download(string rootLocation, IRequestPerformer requestPerformer, bool ignoreRoot = true)
         {
-            var fileSizeData = new FileSizeData(this.RelativeLocation, Name);
+            var fileSizeData = new FileSizeData(RelativeLocation, Name);
             var getFileSizeCommand = new GetFileSizeCommand(fileSizeData);
             var getFileSizeCommandBytes = getFileSizeCommand.Serialize();
             var responseGetFileSizeCommandBytes = requestPerformer.PerformRequest(getFileSizeCommandBytes);
@@ -50,12 +50,12 @@ namespace Entities.TreeNodes
 
             int fileSize = responseGetFileSizeCommand.GetData();
 
-            int pieceSize = 1024768; // 1 мб????
+            int pieceSize = 1024768 * 10; // 1 мб????
 
             FileStream fs = new FileStream(Path.Combine(rootLocation, RelativeLocation, Name), FileMode.CreateNew);
 
             int received = 0;
-            while (received < fileSize)
+            while (received != fileSize)
             {
                 int downloadSize = 0;
                 if (fileSize - received < pieceSize)
@@ -86,6 +86,54 @@ namespace Entities.TreeNodes
 
         public override void Upload(string rootLocation, IRequestPerformer requestPerformer, bool ignoreRoot = true)
         {
+            var fileComparationData = new FileComparationData(RelativeLocation, Name, Hash);
+            var isFileDiffersCommand = new IsFilesEqualCommand(fileComparationData);
+            var isFileDiffersCommandBytes = isFileDiffersCommand.Serialize();
+            var responseIsFileDiffersCommandBytes = requestPerformer.PerformRequest(isFileDiffersCommandBytes);
+            var responseIsFilesEqualCommand =
+                (ResponseIsFilesEqualCommand) SocketCommand.Deserialize(responseIsFileDiffersCommandBytes);
+            if (!responseIsFilesEqualCommand.GetData())
+            {
+                Console.WriteLine($"Performing upload {Name}");
+                // Файлы отличаются
+                FileStream fs = new FileStream(Path.Combine(rootLocation, RelativeLocation, Name), FileMode.Open);
+                int fileSize = (int) fs.Length;
+                int pieceSize = 1024768 * 10; // 1 мб????
+
+                byte[] buffer = new byte[pieceSize];
+
+                int sent = 0;
+                while (sent != fileSize)
+                {
+                    int uploadSize = 0;
+                    if (fileSize - sent < pieceSize)
+                    {
+                        uploadSize = fileSize - sent;
+                        buffer = new byte[uploadSize];
+                    }
+                    else
+                    {
+                        uploadSize = pieceSize;
+                    }
+
+                    fs.Read(buffer, 0, uploadSize);
+
+                    var uploadFilePieceCommand =
+                        new UploadFilePieceCommand(new FilePieceData(RelativeLocation, Name, sent, uploadSize, buffer));
+                    var uploadFilePieceCommandBytes = uploadFilePieceCommand.Serialize();
+                    var responseUploadFilePieceCommandBytes =
+                        requestPerformer.PerformRequest(uploadFilePieceCommandBytes);
+                    // ignore response, it's empty
+
+                    sent += uploadSize;
+                }
+
+                fs.Close();
+            }
+            else
+            {
+                Console.WriteLine($"File is in sync {Name}");
+            }
         }
     }
 }

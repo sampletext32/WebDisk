@@ -81,6 +81,21 @@ namespace Entities.TreeNodes
 
         public override void Upload(string rootLocation, IRequestPerformer requestPerformer, bool ignoreRoot = true)
         {
+            var folderData = new FolderData(RelativeLocation, Name);
+            var createFolderCommand = new CreateFolderCommand(folderData);
+            var createFolderCommandBytes = createFolderCommand.Serialize();
+            var responseCreateFolderBytes = requestPerformer.PerformRequest(createFolderCommandBytes);
+            // ignore response, it's empty
+            
+            foreach (var b in _children.Where(t => t is TreeFolderNode))
+            {
+                b.Upload(rootLocation, requestPerformer, false);
+            }
+
+            foreach (var b in _children.Where(t => t is TreeFileNode))
+            {
+                b.Upload(rootLocation, requestPerformer);
+            }
         }
     }
 }

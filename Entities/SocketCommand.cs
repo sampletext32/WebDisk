@@ -200,14 +200,22 @@ namespace Entities
         {
         }
     }
-    
+
     [Serializable]
-    public class FilePieceData : FilePieceDataLocation
+    public class FilePieceData
     {
+        public string RelativeLocation { get; set; }
+        public string Name { get; set; }
+        public int Offset { get; set; }
+        public int Size { get; set; }
         public byte[] Data { get; set; }
 
-        public FilePieceData(string relativeLocation, string name, int offset, int size, byte[] bytes): base(relativeLocation, name, offset, size)
+        public FilePieceData(string relativeLocation, string name, int offset, int size, byte[] bytes)
         {
+            RelativeLocation = relativeLocation;
+            Name = name;
+            Offset = offset;
+            Size = size;
             Data = bytes;
         }
     }
@@ -217,10 +225,77 @@ namespace Entities
     {
         public FilePieceData GetData()
         {
-            return (FilePieceData)Data;
+            return (FilePieceData) Data;
         }
 
         public UploadFilePieceCommand(FilePieceData pieceData) : base(pieceData)
+        {
+        }
+    }
+    
+    [Serializable]
+    public class FolderData
+    {
+        public string RelativeLocation { get; set; }
+        public string Name { get; set; }
+
+        public FolderData(string relativeLocation, string name)
+        {
+            RelativeLocation = relativeLocation;
+            Name = name;
+        }
+    }
+
+    [Serializable]
+    public class CreateFolderCommand : SocketCommand
+    {
+        public FolderData GetData()
+        {
+            return (FolderData)Data;
+        }
+
+        public CreateFolderCommand(FolderData folderData) : base(folderData)
+        {
+        }
+    }
+
+    [Serializable]
+    public class FileComparationData
+    {
+        public string RelativeLocation { get; set; }
+        public string Name { get; set; }
+        public string Hash { get; set; }
+
+        public FileComparationData(string relativeLocation, string name, string hash)
+        {
+            RelativeLocation = relativeLocation;
+            Name = name;
+            Hash = hash;
+        }
+    }
+
+    [Serializable]
+    public class IsFilesEqualCommand : SocketCommand
+    {
+        public FileComparationData GetData()
+        {
+            return (FileComparationData) Data;
+        }
+
+        public IsFilesEqualCommand(FileComparationData fileComparationData) : base(fileComparationData)
+        {
+        }
+    }
+
+    [Serializable]
+    public class ResponseIsFilesEqualCommand : SocketCommand
+    {
+        public bool GetData()
+        {
+            return (bool) Data;
+        }
+
+        public ResponseIsFilesEqualCommand(bool differs) : base(differs)
         {
         }
     }

@@ -61,6 +61,72 @@ namespace Server
                 ResponseGetFilePieceCommand responseGetFilePieceCommand = new ResponseGetFilePieceCommand(buffer);
                 return responseGetFilePieceCommand;
             }
+            else if (command is UploadFilePieceCommand uploadFilePieceCommand)
+            {
+                Console.WriteLine("Performing UploadFilePiece");
+                var filePieceData = uploadFilePieceCommand.GetData();
+                FileStream fs;
+                if (filePieceData.Offset == 0)
+                {
+                    fs = new FileStream(Path.Combine(SharedFolderLocation, filePieceData.RelativeLocation,
+                        filePieceData.Name), FileMode.Create);
+                }
+                else
+                {
+                    fs = new FileStream(Path.Combine(SharedFolderLocation, filePieceData.RelativeLocation,
+                        filePieceData.Name), FileMode.Append);
+                }
+
+                fs.Write(filePieceData.Data, 0, filePieceData.Size);
+                if (filePieceData.Offset + filePieceData.Size == fs.Length)
+                {
+                    Console.WriteLine("Done File Upload");
+                }
+
+                fs.Close();
+
+                return new EmptyCommand();
+            }
+            else if (command is IsFilesEqualCommand isFileDiffersCommand)
+            {
+                Console.WriteLine("Performing UploadFilePiece");
+                var fileComparationData = isFileDiffersCommand.GetData();
+                string filePath = Path.Combine(SharedFolderLocation, fileComparationData.RelativeLocation,
+                    fileComparationData.Name);
+                if (File.Exists(filePath))
+                {
+                    FileStream fs = new FileStream(filePath, FileMode.Open);
+                    var localHash = TreeNode.CreateMD5(fs);
+                    fs.Close();
+
+                    if (localHash == fileComparationData.Hash)
+                    {
+                        return new ResponseIsFilesEqualCommand(true);
+                    }
+                    else
+                    {
+                        return new ResponseIsFilesEqualCommand(false);
+                    }
+                }
+                else
+                {
+                    return new ResponseIsFilesEqualCommand(false);
+                }
+
+            }
+            else if (command is CreateFolderCommand createFolderCommand)
+            {
+                Console.WriteLine("Performing CreateFolder");
+                var createFolderData = createFolderCommand.GetData();
+                if (!Directory.Exists(Path.Combine(SharedFolderLocation, createFolderData.RelativeLocation,
+                    createFolderData.Name)))
+                {
+                    Directory.CreateDirectory(Path.Combine(SharedFolderLocation, createFolderData.RelativeLocation,
+                        createFolderData.Name));
+                }
+
+                return new EmptyCommand();
+            }
 
             return new EmptyCommand();
         }

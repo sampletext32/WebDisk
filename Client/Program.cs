@@ -68,8 +68,7 @@ namespace Client
                 {
                     Console.WriteLine("Found mismatch, performing sync");
 
-
-                    // TODO: Sync
+                    localTree.Upload(SharedFolderLocation, SocketHandler.Request(IPAddress.Loopback, 11771), false);
                 }
 
                 Thread.Sleep(10 * 1000);
