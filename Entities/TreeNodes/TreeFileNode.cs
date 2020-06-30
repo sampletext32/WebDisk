@@ -39,11 +39,6 @@ namespace Entities.TreeNodes
             return selfHtml;
         }
 
-        public override void BuildHierarchy(string rootLocation, bool ignoreRoot = true)
-        {
-            File.Create(Path.Combine(rootLocation, Name)).Close();
-        }
-
         public override void Download(string rootLocation, IRequestPerformer requestPerformer, bool ignoreRoot = true)
         {
             var fileSizeData = new FileSizeData(this.RelativeLocation, Name);

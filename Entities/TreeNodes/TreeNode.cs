@@ -76,10 +76,6 @@ namespace Entities.TreeNodes
             return "Unsupported call on base";
         }
 
-        public virtual void BuildHierarchy(string rootLocation, bool ignoreRoot = true)
-        {
-        }
-
         public virtual void Download(string rootLocation, IRequestPerformer requestPerformer, bool ignoreRoot = true)
         {
         }

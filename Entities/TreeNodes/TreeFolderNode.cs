@@ -61,36 +61,6 @@ namespace Entities.TreeNodes
             return selfXml;
         }
 
-        public override void BuildHierarchy(string rootLocation, bool ignoreRoot = true)
-        {
-            if (!ignoreRoot)
-            {
-                Directory.CreateDirectory(Path.Combine(rootLocation, Name));
-
-                foreach (var b in _children.Where(t => t is TreeFolderNode))
-                {
-                    b.BuildHierarchy(Path.Combine(rootLocation, Name), false);
-                }
-
-                foreach (var b in _children.Where(t => t is TreeFileNode))
-                {
-                    b.BuildHierarchy(Path.Combine(rootLocation, Name));
-                }
-            }
-            else
-            {
-                foreach (var b in _children.Where(t => t is TreeFolderNode))
-                {
-                    b.BuildHierarchy(Path.Combine(rootLocation), false);
-                }
-
-                foreach (var b in _children.Where(t => t is TreeFileNode))
-                {
-                    b.BuildHierarchy(Path.Combine(rootLocation));
-                }
-            }
-        }
-
         public override void Download(string rootLocation, IRequestPerformer requestPerformer, bool ignoreRoot = true)
         {
             if (!ignoreRoot)
@@ -111,51 +81,6 @@ namespace Entities.TreeNodes
 
         public override void Upload(string rootLocation, IRequestPerformer requestPerformer, bool ignoreRoot = true)
         {
-        }
-
-        public void Synchronize(TreeNode remoteNode, string absoluteLocation, bool ignoreRoot = true)
-        {
-            var treeFolderNode = (TreeFolderNode) remoteNode;
-            var remoteFolderFiles = treeFolderNode._children.Where(t => t is TreeFileNode);
-            var localFolderFiles = _children.Where(t => t is TreeFileNode);
-
-            foreach (var localFolderFile in localFolderFiles)
-            {
-                // Проверяем наличие такого файла по имени
-                var remotePairByName = remoteFolderFiles.FirstOrDefault(t => t.Name == localFolderFile.Name);
-
-                if (remotePairByName == null)
-                {
-                    // Удалённого файла не существует
-                    // TODO: Проверить по хешам и переименовать файл
-                    // TODO: Проверить одинаковые ли хеши от файлов с разными названиями но одинаковым контентом
-                }
-                else
-                {
-                    // Найден файл с таким же именем
-
-                    if (remotePairByName.Hash == localFolderFile.Hash)
-                    {
-                        // Если хеш файла одинаковый - файл с таким именем не изменился, игнорируем его инхронизацию
-                    }
-                    else
-                    {
-                        // файл с этим именем изменился, синхронизируем его
-                        // TODO: что делать? скачивать удалённый файл, тогда сервер - мастер, или отправлять локальный, тогда клиент - мастер
-                    }
-
-                    // var remotePairByHash =
-                    //     remoteFolderFiles.FirstOrDefault(t => t.GetHash() == localFolderFile.GetHash());
-                    // if (remotePairByHash == null)
-                    // {
-                    //     // Удалённо файл не существует
-                    //     // TODO: Upload current file
-                    // }
-                    // else
-                    // {
-                    // }
-                }
-            }
         }
     }
 }
