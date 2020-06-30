@@ -20,6 +20,13 @@ namespace Entities.TreeNodes
             this.Name = name;
         }
 
+        public TreeNode(string name, string relativeLocation, string hash)
+        {
+            this.Name = name;
+            RelativeLocation = relativeLocation;
+            Hash = hash;
+        }
+
         public virtual string WrapHtml(string rootLocation)
         {
             return "";
@@ -69,15 +76,15 @@ namespace Entities.TreeNodes
             return "Unsupported call on base";
         }
 
-        public virtual void BuildHierarchy(string absoluteLocation, bool ignoreRoot = true)
+        public virtual void BuildHierarchy(string rootLocation, bool ignoreRoot = true)
         {
         }
 
-        public virtual void Synchronize(TreeNode remoteNode, string absoluteLocation, bool ignoreRoot = true)
+        public virtual void Download(string rootLocation, IRequestPerformer requestPerformer, bool ignoreRoot = true)
         {
         }
 
-        public virtual void Download(TreeNode remoteNode, string absoluteLocation, bool ignoreRoot = true)
+        public virtual void Upload(string rootLocation, IRequestPerformer requestPerformer, bool ignoreRoot = true)
         {
         }
 

@@ -20,14 +20,14 @@ namespace Client
         {
             if (!Directory.Exists(Path.Combine(SharedFolderLocation, SharedFolderName)))
             {
-                Directory.CreateDirectory(Path.Combine(SharedFolderLocation, SharedFolderName));
                 Console.WriteLine($"{SharedFolderName} folder not found");
 
                 var treeCommand = SocketHandler.Request(IPAddress.Loopback, 11771)
                     .PerformCommand<ResponseGetTreeCommand>(new GetTreeCommand());
 
                 var remoteTreeRoot = treeCommand.GetData();
-                remoteTreeRoot.BuildHierarchy(Path.Combine(SharedFolderLocation, SharedFolderName));
+                remoteTreeRoot.Download(SharedFolderLocation,
+                    SocketHandler.Request(IPAddress.Loopback, 11771), false);
             }
             else
             {
@@ -58,7 +58,8 @@ namespace Client
 
                 CompareHashCommand compareHashCommand = new CompareHashCommand(hash);
                 var socketHandler = SocketHandler.Request(IPAddress.Loopback, 11771);
-                var responseCompareHashCommand = socketHandler.PerformCommand<ResponseCompareHashCommand>(compareHashCommand);
+                var responseCompareHashCommand =
+                    socketHandler.PerformCommand<ResponseCompareHashCommand>(compareHashCommand);
                 if (responseCompareHashCommand.GetData() == true)
                 {
                     Console.WriteLine("Folders equals");
@@ -66,6 +67,7 @@ namespace Client
                 else
                 {
                     Console.WriteLine("Found mismatch, performing sync");
+
 
                     // TODO: Sync
                 }

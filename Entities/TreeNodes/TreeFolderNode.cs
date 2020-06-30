@@ -61,75 +61,70 @@ namespace Entities.TreeNodes
             return selfXml;
         }
 
-        public override void BuildHierarchy(string absoluteLocation, bool ignoreRoot = true)
+        public override void BuildHierarchy(string rootLocation, bool ignoreRoot = true)
         {
             if (!ignoreRoot)
             {
-                Directory.CreateDirectory(Path.Combine(absoluteLocation, Name));
+                Directory.CreateDirectory(Path.Combine(rootLocation, Name));
 
                 foreach (var b in _children.Where(t => t is TreeFolderNode))
                 {
-                    b.BuildHierarchy(Path.Combine(absoluteLocation, Name), false);
+                    b.BuildHierarchy(Path.Combine(rootLocation, Name), false);
                 }
 
                 foreach (var b in _children.Where(t => t is TreeFileNode))
                 {
-                    b.BuildHierarchy(Path.Combine(absoluteLocation, Name));
+                    b.BuildHierarchy(Path.Combine(rootLocation, Name));
                 }
             }
             else
             {
                 foreach (var b in _children.Where(t => t is TreeFolderNode))
                 {
-                    b.BuildHierarchy(Path.Combine(absoluteLocation), false);
+                    b.BuildHierarchy(Path.Combine(rootLocation), false);
                 }
 
                 foreach (var b in _children.Where(t => t is TreeFileNode))
                 {
-                    b.BuildHierarchy(Path.Combine(absoluteLocation));
+                    b.BuildHierarchy(Path.Combine(rootLocation));
                 }
             }
         }
 
-        public override void Download(TreeNode remoteNode, string absoluteLocation, bool ignoreRoot = true)
+        public override void Download(string rootLocation, IRequestPerformer requestPerformer, bool ignoreRoot = true)
         {
-            Directory.Delete(Path.Combine(absoluteLocation, Name), true);
-            Directory.CreateDirectory(Path.Combine(absoluteLocation, Name));
             if (!ignoreRoot)
             {
-                var treeFolderNode = remoteNode as TreeFolderNode;
-
-                foreach (var b in treeFolderNode._children.Where(t => t is TreeFolderNode))
+                Directory.CreateDirectory(Path.Combine(rootLocation, RelativeLocation, Name));
+                foreach (var b in _children.Where(t => t is TreeFolderNode))
                 {
-                    TreeNode folderNode = new TreeFolderNode(b.Name);
-                    folderNode.Download(b, Path.Combine(absoluteLocation, Name), false);
+                    b.Download(Path.Combine(rootLocation), requestPerformer, false);
                 }
 
-                foreach (var b in treeFolderNode._children.Where(t => t is TreeFileNode))
+                foreach (var b in _children.Where(t => t is TreeFileNode))
                 {
-                    TreeNode fileNode = new TreeFileNode(b.Name);
-                    fileNode.Download(b, Path.Combine(absoluteLocation, Name));
+                    b.Download(Path.Combine(rootLocation), requestPerformer);
                 }
             }
             else
             {
-                var treeFolderNode = remoteNode as TreeFolderNode;
-
-                foreach (var b in treeFolderNode._children.Where(t => t is TreeFolderNode))
+                foreach (var b in _children.Where(t => t is TreeFolderNode))
                 {
-                    TreeNode folderNode = new TreeFolderNode(b.Name);
-                    folderNode.Download(b, Path.Combine(absoluteLocation), false);
+                    b.Download(Path.Combine(rootLocation), requestPerformer, false);
                 }
 
-                foreach (var b in treeFolderNode._children.Where(t => t is TreeFileNode))
+                foreach (var b in _children.Where(t => t is TreeFileNode))
                 {
-                    TreeNode fileNode = new TreeFileNode(b.Name);
-                    fileNode.Download(b, Path.Combine(absoluteLocation));
+                    b.Download(Path.Combine(rootLocation), requestPerformer);
                 }
             }
         }
 
-        public override void Synchronize(TreeNode remoteNode, string absoluteLocation, bool ignoreRoot = true)
+        public override void Upload(string rootLocation, IRequestPerformer requestPerformer, bool ignoreRoot = true)
+        {
+        }
+
+        public void Synchronize(TreeNode remoteNode, string absoluteLocation, bool ignoreRoot = true)
         {
             var treeFolderNode = (TreeFolderNode) remoteNode;
             var remoteFolderFiles = treeFolderNode._children.Where(t => t is TreeFileNode);
