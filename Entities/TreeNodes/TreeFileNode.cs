@@ -68,7 +68,7 @@ namespace Entities.TreeNodes
                 }
 
                 var getFilePieceCommand =
-                    new GetFilePieceCommand(new FilePieceData(RelativeLocation, Name, received, downloadSize));
+                    new GetFilePieceCommand(new FilePieceDataLocation(RelativeLocation, Name, received, downloadSize));
                 var getFilePieceCommandBytes = getFilePieceCommand.Serialize();
                 var responseGetFilePieceCommandBytes = requestPerformer.PerformRequest(getFilePieceCommandBytes);
                 var responseGetFilePieceCommand =

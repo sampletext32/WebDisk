@@ -159,14 +159,14 @@ namespace Entities
     }
 
     [Serializable]
-    public class FilePieceData
+    public class FilePieceDataLocation
     {
         public string RelativeLocation { get; set; }
         public string Name { get; set; }
         public int Offset { get; set; }
         public int Size { get; set; }
 
-        public FilePieceData(string relativeLocation, string name, int offset, int size)
+        public FilePieceDataLocation(string relativeLocation, string name, int offset, int size)
         {
             RelativeLocation = relativeLocation;
             Name = name;
@@ -178,12 +178,12 @@ namespace Entities
     [Serializable]
     public class GetFilePieceCommand : SocketCommand
     {
-        public FilePieceData GetData()
+        public FilePieceDataLocation GetData()
         {
-            return (FilePieceData) Data;
+            return (FilePieceDataLocation) Data;
         }
 
-        public GetFilePieceCommand(FilePieceData filePieceData) : base(filePieceData)
+        public GetFilePieceCommand(FilePieceDataLocation filePieceData) : base(filePieceData)
         {
         }
     }
@@ -197,6 +197,30 @@ namespace Entities
         }
 
         public ResponseGetFilePieceCommand(byte[] piece) : base(piece)
+        {
+        }
+    }
+    
+    [Serializable]
+    public class FilePieceData : FilePieceDataLocation
+    {
+        public byte[] Data { get; set; }
+
+        public FilePieceData(string relativeLocation, string name, int offset, int size, byte[] bytes): base(relativeLocation, name, offset, size)
+        {
+            Data = bytes;
+        }
+    }
+
+    [Serializable]
+    public class UploadFilePieceCommand : SocketCommand
+    {
+        public FilePieceData GetData()
+        {
+            return (FilePieceData)Data;
+        }
+
+        public UploadFilePieceCommand(FilePieceData pieceData) : base(pieceData)
         {
         }
     }
