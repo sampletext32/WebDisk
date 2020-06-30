@@ -82,7 +82,7 @@ namespace Server
             }
             else
             {
-                socketData.Socket.BeginReceive(socketData.Buffer, socketData.ReceivedBytes, 8192, SocketFlags.None,
+                socketData.Socket.BeginReceive(socketData.Buffer, socketData.ReceivedBytes, socketData.Buffer.Length - socketData.ReceivedBytes, SocketFlags.None,
                     OnClientContinueReceive,
                     socketData);
             }
