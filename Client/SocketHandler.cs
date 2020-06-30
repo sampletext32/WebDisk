@@ -34,14 +34,24 @@ namespace Client
             _socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
         }
 
-        public void Connect()
+        public bool Connect()
         {
-            _connectResult = _socket.BeginConnect(_ipAddress, _port, OnConnect, null);
-        }
+            _connectResult = _socket.BeginConnect(_ipAddress, _port, ar => { }, null);
 
-        private void OnConnect(IAsyncResult ar)
-        {
-            _socket.EndConnect(_connectResult);
+            while (!_connectResult.AsyncWaitHandle.WaitOne(100))
+            {
+                Thread.Sleep(1);
+            }
+
+            try
+            {
+                _socket.EndConnect(_connectResult);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
         }
 
         public T PerformCommand<T>(SocketCommand command) where T : SocketCommand
@@ -67,17 +77,18 @@ namespace Client
         public byte[] PerformRequest(byte[] data)
         {
             Init();
-            Connect();
-
-            while (!_connectResult.AsyncWaitHandle.WaitOne(10))
+            if (Connect())
             {
-                Thread.Sleep(1);
+
+                Utils.SendWithSizeHeader(_socket, data);
+
+                byte[] buffer = Utils.ReceiveWithSizeHeader(_socket);
+                return buffer;
             }
-
-            Utils.SendWithSizeHeader(_socket, data);
-
-            byte[] buffer = Utils.ReceiveWithSizeHeader(_socket);
-            return buffer;
+            else
+            {
+                throw new InvalidOperationException("Connect Failed!");
+            }
         }
     }
 }
