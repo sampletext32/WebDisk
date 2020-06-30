@@ -21,12 +21,18 @@ namespace Entities.TreeNodes
             _children.Add(child);
         }
 
-        public override string WrapHtml(string absoluteLocation)
+        public override string CalculateHash(string rootLocation)
+        {
+            string xml = WrapHashedXML(rootLocation, false);
+            return CreateMD5(xml);
+        }
+
+        public override string WrapHtml(string rootLocation)
         {
             StringBuilder childrenHtmlBuilder = new StringBuilder();
             foreach (var child in _children)
             {
-                childrenHtmlBuilder.AppendLine(child.WrapHtml(Path.Combine(absoluteLocation, Name)));
+                childrenHtmlBuilder.AppendLine(child.WrapHtml(rootLocation));
             }
 
             string selfHtml = $"<li>{Name}<ul>{childrenHtmlBuilder}</ul></li>";
@@ -34,25 +40,25 @@ namespace Entities.TreeNodes
             return selfHtml;
         }
 
-        public override string WrapHashedXML(string absoluteLocation, bool ignoreRoot = true)
+        public override string WrapHashedXML(string rootLocation, bool ignoreRoot = true)
         {
             StringBuilder childrenHtmlBuilder = new StringBuilder();
             foreach (var child in _children)
             {
-                childrenHtmlBuilder.Append(child.WrapHashedXML(Path.Combine(absoluteLocation, Name), false));
+                childrenHtmlBuilder.Append(child.WrapHashedXML(rootLocation, false));
             }
 
-            string selfHtml;
+            string selfXml;
             if (ignoreRoot)
             {
-                selfHtml = $"<items>{childrenHtmlBuilder}</items>";
+                selfXml = $"<items>{childrenHtmlBuilder}</items>";
             }
             else
             {
-                selfHtml = $"<folder><name>{Name}</name><items>{childrenHtmlBuilder}</items></folder>";
+                selfXml = $"<folder><name>{Name}</name><items>{childrenHtmlBuilder}</items></folder>";
             }
 
-            return selfHtml;
+            return selfXml;
         }
 
         public override void BuildHierarchy(string absoluteLocation, bool ignoreRoot = true)

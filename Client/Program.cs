@@ -13,22 +13,21 @@ namespace Client
 {
     class Program
     {
-        public static string FolderLocation = "C:\\Projects\\CSharp\\WebDisk\\Client\\bin\\Debug";
+        public static string SharedFolderLocation = "C:\\Projects\\CSharp\\WebDisk\\Client\\bin\\Debug";
         public static string SharedFolderName = "shared";
-        public static string SharedFolderPath = Path.Combine(FolderLocation, SharedFolderName);
 
         static void Main(string[] args)
         {
-            if (!Directory.Exists(SharedFolderPath))
+            if (!Directory.Exists(Path.Combine(SharedFolderLocation, SharedFolderName)))
             {
-                Directory.CreateDirectory(SharedFolderPath);
+                Directory.CreateDirectory(Path.Combine(SharedFolderLocation, SharedFolderName));
                 Console.WriteLine($"{SharedFolderName} folder not found");
 
                 var treeCommand = SocketHandler.Request(IPAddress.Loopback, 11771)
                     .PerformCommand<ResponseGetTreeCommand>(new GetTreeCommand());
 
                 var remoteTreeRoot = treeCommand.GetData();
-                remoteTreeRoot.BuildHierarchy(SharedFolderPath);
+                remoteTreeRoot.BuildHierarchy(Path.Combine(SharedFolderLocation, SharedFolderName));
             }
             else
             {
@@ -53,9 +52,9 @@ namespace Client
         {
             while (Thread.CurrentThread.ThreadState != ThreadState.AbortRequested)
             {
-                var localTree = TreeAnalyzer.BuildTree(FolderLocation, SharedFolderName);
+                var localTree = TreeAnalyzer.BuildTree(SharedFolderLocation, SharedFolderName);
 
-                var hash = localTree.CalculateHash(FolderLocation);
+                var hash = localTree.CalculateHash(SharedFolderLocation);
 
                 CompareHashCommand compareHashCommand = new CompareHashCommand(hash);
                 var socketHandler = SocketHandler.Request(IPAddress.Loopback, 11771);
@@ -67,13 +66,6 @@ namespace Client
                 else
                 {
                     Console.WriteLine("Found mismatch, performing sync");
-                    GetHashXmlTreeCommand getHashXmlTreeCommand = new GetHashXmlTreeCommand();
-                    socketHandler = SocketHandler.Request(IPAddress.Loopback, 11771);
-                    var responseGetHashXmlTreeCommand = socketHandler.PerformCommand<ResponseGetHashXmlTreeCommand>(getHashXmlTreeCommand);
-
-                    var xmlTree = responseGetHashXmlTreeCommand.GetData();
-
-                    
 
                     // TODO: Sync
                 }

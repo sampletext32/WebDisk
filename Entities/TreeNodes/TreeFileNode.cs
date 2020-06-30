@@ -10,10 +10,10 @@ namespace Entities.TreeNodes
         {
         }
 
-        public override string CalculateHash(string absoluteLocation)
+        public override string CalculateHash(string rootLocation)
         {
             string hash;
-            using (FileStream stream = new FileStream(Path.Combine(absoluteLocation, Name), FileMode.Open))
+            using (FileStream stream = new FileStream(Path.Combine(rootLocation, RelativeLocation, Name), FileMode.Open))
             {
                 hash = CreateMD5(stream);
             }
@@ -22,17 +22,17 @@ namespace Entities.TreeNodes
             return hash;
         }
 
-        public override string WrapHtml(string absoluteLocation)
+        public override string WrapHtml(string rootLocation)
         {
-            string hash = CalculateHash(absoluteLocation);
+            string hash = CalculateHash(rootLocation);
             string selfHtml = $"<li>{hash}</li>";
 
             return selfHtml;
         }
 
-        public override string WrapHashedXML(string absoluteLocation, bool ignoreRoot = true)
+        public override string WrapHashedXML(string rootLocation, bool ignoreRoot = true)
         {
-            string hash = CalculateHash(absoluteLocation);
+            string hash = CalculateHash(rootLocation);
 
             string selfHtml = $"<file>{hash}</file>";
             return selfHtml;

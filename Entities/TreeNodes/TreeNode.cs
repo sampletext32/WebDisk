@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Security.Cryptography;
 using System.Text;
@@ -19,12 +20,12 @@ namespace Entities.TreeNodes
             this.Name = name;
         }
 
-        public virtual string WrapHtml(string absoluteLocation)
+        public virtual string WrapHtml(string rootLocation)
         {
             return "";
         }
 
-        public virtual string WrapHashedXML(string absoluteLocation, bool ignoreRoot = true)
+        public virtual string WrapHashedXML(string rootLocation, bool ignoreRoot = true)
         {
             return "";
         }
@@ -62,8 +63,9 @@ namespace Entities.TreeNodes
             }
         }
 
-        public virtual string CalculateHash(string absoluteLocation)
+        public virtual string CalculateHash(string rootLocation)
         {
+            Debug.WriteLine("CalculateHash on base");
             return "Unsupported call on base";
         }
 

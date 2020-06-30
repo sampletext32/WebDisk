@@ -79,7 +79,7 @@ namespace Entities.TreeNodes
 
                     TreeNode node = new TreeFileNode(fileName);
                     node.RelativeLocation = Path.Combine(relativeLocation, name);
-                    node.CalculateHash(Path.Combine(absoluteRootLocation, relativeLocation, name));
+                    node.CalculateHash(absoluteRootLocation);
                     currentFolderNode.AddChild(node);
                 }
             }
