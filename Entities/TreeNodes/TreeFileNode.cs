@@ -55,7 +55,7 @@ namespace Entities.TreeNodes
 
             int fileSize = responseGetFileSizeCommand.GetData();
 
-            int pieceSize = 16384;
+            int pieceSize = 1024768; // 1 мб????
 
             FileStream fs = new FileStream(Path.Combine(rootLocation, RelativeLocation, Name), FileMode.CreateNew);
 

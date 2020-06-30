@@ -79,7 +79,6 @@ namespace Client
             Init();
             if (Connect())
             {
-
                 Utils.SendWithSizeHeader(_socket, data);
 
                 byte[] buffer = Utils.ReceiveWithSizeHeader(_socket);

@@ -96,27 +96,16 @@ namespace Entities.TreeNodes
             if (!ignoreRoot)
             {
                 Directory.CreateDirectory(Path.Combine(rootLocation, RelativeLocation, Name));
-                foreach (var b in _children.Where(t => t is TreeFolderNode))
-                {
-                    b.Download(Path.Combine(rootLocation), requestPerformer, false);
-                }
-
-                foreach (var b in _children.Where(t => t is TreeFileNode))
-                {
-                    b.Download(Path.Combine(rootLocation), requestPerformer);
-                }
             }
-            else
-            {
-                foreach (var b in _children.Where(t => t is TreeFolderNode))
-                {
-                    b.Download(Path.Combine(rootLocation), requestPerformer, false);
-                }
 
-                foreach (var b in _children.Where(t => t is TreeFileNode))
-                {
-                    b.Download(Path.Combine(rootLocation), requestPerformer);
-                }
+            foreach (var b in _children.Where(t => t is TreeFolderNode))
+            {
+                b.Download(rootLocation, requestPerformer, false);
+            }
+
+            foreach (var b in _children.Where(t => t is TreeFileNode))
+            {
+                b.Download(rootLocation, requestPerformer);
             }
         }
 
