@@ -62,9 +62,6 @@ namespace Client
 
             var response = ProcessResponse<T>(buffer);
 
-            _socket.Shutdown(SocketShutdown.Both);
-            _socket.Close();
-
             return response;
         }
 
@@ -82,6 +79,10 @@ namespace Client
                 Utils.SendWithSizeHeader(_socket, data);
 
                 byte[] buffer = Utils.ReceiveWithSizeHeader(_socket);
+
+                _socket.Shutdown(SocketShutdown.Both);
+                _socket.Close();
+
                 return buffer;
             }
             else
