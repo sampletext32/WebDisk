@@ -41,6 +41,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="IRequestPerformer.cs" />
     <Compile Include="SocketCommand.cs" />
     <Compile Include="TreeNodes\TreeAnalyzer.cs" />
     <Compile Include="TreeNodes\TreeFileNode.cs" />

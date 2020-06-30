@@ -10,7 +10,7 @@ using Entities;
 
 namespace Client
 {
-    public class SocketHandler
+    public class SocketHandler : IRequestPerformer
     {
         private IPAddress _ipAddress;
         public int _port;
@@ -23,7 +23,7 @@ namespace Client
             _ipAddress = ipAddress;
             _port = port;
         }
-        
+
         public static SocketHandler Request(IPAddress ipAddress, int port)
         {
             return new SocketHandler(ipAddress, port);
@@ -48,17 +48,7 @@ namespace Client
         {
             var bytes = command.Serialize();
 
-            Init();
-            Connect();
-
-            while (!_connectResult.AsyncWaitHandle.WaitOne(10))
-            {
-                Thread.Sleep(1);
-            }
-
-            Utils.SendWithSizeHeader(_socket, bytes);
-
-            byte[] buffer = Utils.ReceiveWithSizeHeader(_socket);
+            byte[] buffer = PerformRequest(bytes);
 
             var response = ProcessResponse<T>(buffer);
 
@@ -72,6 +62,22 @@ namespace Client
         {
             var socketCommand = SocketCommand.Deserialize(data);
             return (T) socketCommand;
+        }
+
+        public byte[] PerformRequest(byte[] data)
+        {
+            Init();
+            Connect();
+
+            while (!_connectResult.AsyncWaitHandle.WaitOne(10))
+            {
+                Thread.Sleep(1);
+            }
+
+            Utils.SendWithSizeHeader(_socket, data);
+
+            byte[] buffer = Utils.ReceiveWithSizeHeader(_socket);
+            return buffer;
         }
     }
 }
