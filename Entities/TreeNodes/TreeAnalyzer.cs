@@ -28,7 +28,9 @@ namespace Entities.TreeNodes
             LogBuilder.Get()
                 .AppendInfo(
                     $"Started FileTree Retrieving At \"{absoluteFolderPath}");
-            _tree = RetrieveFolder(absoluteFolderPath, "");
+            var folderName =
+                absoluteFolderPath.Substring(absoluteFolderPath.LastIndexOf(Path.DirectorySeparatorChar) + 1);
+            _tree = RetrieveFolder(absoluteFolderPath, "", folderName);
         }
 
         public TreeNode GetTree()
@@ -42,29 +44,17 @@ namespace Entities.TreeNodes
             return _tree;
         }
 
-        private TreeNode RetrieveFolder(string absoluteRootLocation, string relativePath)
+        private TreeNode RetrieveFolder(string absoluteRootLocation, string relativeLocation, string name)
         {
-            string absoluteLocation = Path.Combine(absoluteRootLocation, relativePath);
+            string absoluteLocation = Path.Combine(absoluteRootLocation, relativeLocation);
             if (!PathIsDirectory(absoluteLocation))
             {
                 LogBuilder.Get().AppendError($"Attempted to retrieve folder with invalid path \"{absoluteLocation}\"");
                 throw new ArgumentException("Folder With Invalid Path Found"); //Not Possible In Real Scenario
             }
 
-            string currentFolderName;
-            if (absoluteLocation.Length == 3)
-            {
-                // C:\
-                currentFolderName = absoluteLocation;
-            }
-            else
-            {
-                // Any folder 
-                currentFolderName = absoluteLocation.Substring(absoluteLocation.LastIndexOf(Path.DirectorySeparatorChar) + 1);
-            }
-
-            TreeFolderNode currentFolderNode = new TreeFolderNode(currentFolderName);
-            currentFolderNode.RelativeLocation = relativePath;
+            TreeFolderNode currentFolderNode = new TreeFolderNode(name);
+            currentFolderNode.RelativeLocation = relativeLocation;
 
             try
             {
@@ -77,7 +67,8 @@ namespace Entities.TreeNodes
 
                     LogBuilder.Get().AppendInfo($"Found Folder \"{innerDirectoryPath}\"");
 
-                    TreeNode folderNode = RetrieveFolder(absoluteRootLocation, Path.Combine(relativePath, folderName));
+                    TreeNode folderNode =
+                        RetrieveFolder(absoluteRootLocation, Path.Combine(relativeLocation), folderName);
                     currentFolderNode.AddChild(folderNode);
                 }
             }
@@ -96,7 +87,7 @@ namespace Entities.TreeNodes
                     LogBuilder.Get().AppendInfo($"Found File \"{fileName}\"");
                     TreeNode node = new TreeFileNode(fileName);
                     node.CalculateHash(absoluteLocation);
-                    node.RelativeLocation = Path.Combine(relativePath, fileName);
+                    node.RelativeLocation = Path.Combine(relativeLocation);
                     currentFolderNode.AddChild(node);
                 }
             }
