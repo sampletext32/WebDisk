@@ -62,16 +62,15 @@ namespace Server
             {
                 Console.WriteLine("Performing UploadFilePiece");
                 var filePieceData = commandUploadFilePiece.GetData();
+                var path = Path.Combine(SharedFolderLocation, filePieceData.RelativeLocation, filePieceData.Name);
                 FileStream fs;
                 if (filePieceData.Offset == 0)
                 {
-                    fs = new FileStream(Path.Combine(SharedFolderLocation, filePieceData.RelativeLocation,
-                        filePieceData.Name), FileMode.Create);
+                    fs = new FileStream(path, FileMode.Create);
                 }
                 else
                 {
-                    fs = new FileStream(Path.Combine(SharedFolderLocation, filePieceData.RelativeLocation,
-                        filePieceData.Name), FileMode.Append);
+                    fs = new FileStream(path, FileMode.Append);
                 }
 
                 fs.Write(filePieceData.Data, 0, filePieceData.Size);
@@ -115,8 +114,9 @@ namespace Server
                 if (!Directory.Exists(Path.Combine(SharedFolderLocation, createFolderData.RelativeLocation,
                     createFolderData.Name)))
                 {
-                    Directory.CreateDirectory(Path.Combine(SharedFolderLocation, createFolderData.RelativeLocation,
-                        createFolderData.Name));
+                    var path = Path.Combine(SharedFolderLocation, createFolderData.RelativeLocation,
+                        createFolderData.Name);
+                    Directory.CreateDirectory(path);
                 }
 
                 return new CommandNone();
