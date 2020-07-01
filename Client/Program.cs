@@ -54,7 +54,7 @@ namespace Client
                 var hash = localTree.CalculateHash(SharedFolderLocation);
 
                 CommandCompareHash socketCommandCompareHash = new CommandCompareHash(hash);
-                var socketHandler = SocketHandler.Request(IPAddress.Loopback, 11771);
+                var socketHandler = SocketHandler.Request(IPAddress.Loopback, Constants.ConnectionPort);
                 var responseCompareHashCommand =
                     socketHandler.PerformCommand<CommandCompareHashResponse>(socketCommandCompareHash);
                 if (responseCompareHashCommand.GetData() == true)
@@ -71,7 +71,7 @@ namespace Client
                         socketHandler.PerformCommand<CommandNone>(socketCommandDeleteNonExistent);
 
                     Console.WriteLine("Uploading tree");
-                    localTree.Upload(SharedFolderLocation, SocketHandler.Request(IPAddress.Loopback, 11771), false);
+                    localTree.Upload(SharedFolderLocation, SocketHandler.Request(IPAddress.Loopback, Constants.ConnectionPort), false);
                 }
 
                 Thread.Sleep(10 * 1000);
