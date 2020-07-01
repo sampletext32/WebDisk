@@ -14,8 +14,6 @@ namespace Client
 
         private Socket _socket;
 
-        private IAsyncResult _connectResult;
-
         private SocketHandler(IPAddress ipAddress, int port)
         {
             IpAddress = ipAddress;
@@ -34,16 +32,13 @@ namespace Client
 
         public bool Connect()
         {
-            _connectResult = _socket.BeginConnect(IpAddress, Port, ar => { }, null);
+            IAsyncResult connectResult = _socket.BeginConnect(IpAddress, Port, ar => { }, null);
 
-            while (!_connectResult.AsyncWaitHandle.WaitOne(Constants.ConnectionTimeoutMilliseconds))
-            {
-                Thread.Sleep(1);
-            }
+            connectResult.AsyncWaitHandle.WaitOne(Constants.ConnectionTimeoutMilliseconds);
 
             try
             {
-                _socket.EndConnect(_connectResult);
+                _socket.EndConnect(connectResult);
                 return true;
             }
             catch
