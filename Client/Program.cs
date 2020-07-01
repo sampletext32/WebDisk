@@ -68,6 +68,12 @@ namespace Client
                 {
                     Console.WriteLine("Found mismatch, performing sync");
 
+                    Console.WriteLine("Deleting folders");
+                    DeleteNonExistentCommand deleteNonExistentCommand = new DeleteNonExistentCommand(localTree);
+                    var deleteNonExistentCommandResponse =
+                        socketHandler.PerformCommand<EmptyCommand>(deleteNonExistentCommand);
+
+                    Console.WriteLine("Uploading tree");
                     localTree.Upload(SharedFolderLocation, SocketHandler.Request(IPAddress.Loopback, 11771), false);
                 }
 

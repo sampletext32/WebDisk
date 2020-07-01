@@ -97,5 +97,40 @@ namespace Entities.TreeNodes
                 b.Upload(rootLocation, requestPerformer);
             }
         }
+
+        public override void DeleteNonExistent(string rootLocation, bool ignoreRoot = true)
+        {
+            var directories = Directory.EnumerateDirectories(Path.Combine(rootLocation, RelativeLocation, Name));
+            var files = Directory.EnumerateFiles(Path.Combine(rootLocation, RelativeLocation, Name));
+
+            foreach (var directory in directories)
+            {
+                var directoryName = Path.GetDirectoryName(directory);
+                var child = _children.FirstOrDefault(t => t.Name == directoryName);
+                if (child == null)
+                {
+                    Directory.Delete(directory, true);
+                }
+                else
+                {
+                    // папка найдена - удаляем контент рекурсивно
+                    child.DeleteNonExistent(rootLocation, false);
+                }
+            }
+
+            foreach (var file in files)
+            {
+                var fileName = Path.GetFileName(file);
+                var child = _children.FirstOrDefault(t => t.Name == fileName);
+                if (child == null)
+                {
+                    File.Delete(file);
+                }
+                else
+                {
+                    // Удалять файл нет смысла, он есть в дереве
+                }
+            }
+        }
     }
 }

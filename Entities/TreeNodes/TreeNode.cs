@@ -84,6 +84,10 @@ namespace Entities.TreeNodes
         {
         }
 
+        public virtual void DeleteNonExistent(string rootLocation, bool ignoreRoot = true)
+        {
+        }
+
         public override string ToString()
         {
             return Path.Combine(RelativeLocation, Name);

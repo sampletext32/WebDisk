@@ -299,4 +299,17 @@ namespace Entities
         {
         }
     }
+
+    [Serializable]
+    public class DeleteNonExistentCommand : SocketCommand
+    {
+        public TreeNode GetData()
+        {
+            return (TreeNode) Data;
+        }
+
+        public DeleteNonExistentCommand(TreeNode treeNode) : base(treeNode)
+        {
+        }
+    }
 }

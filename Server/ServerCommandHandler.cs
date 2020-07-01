@@ -127,6 +127,13 @@ namespace Server
 
                 return new EmptyCommand();
             }
+            else if (command is DeleteNonExistentCommand deleteNonExistentCommand)
+            {
+                Console.WriteLine("Performing CreateFolder");
+                var remoteTree = deleteNonExistentCommand.GetData();
+                remoteTree.DeleteNonExistent(SharedFolderLocation);
+                return new EmptyCommand();
+            }
 
             return new EmptyCommand();
         }
