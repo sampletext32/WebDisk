@@ -37,7 +37,7 @@ namespace Client
 
             if (Constants.Debug) Console.WriteLine($"Starting Sync Thread;");
 
-            Thread syncThread = new Thread(ThreadFunc);
+            Thread syncThread = new Thread(SyncThreadJob);
             syncThread.Start();
 
             Console.WriteLine("Started Client");
@@ -55,7 +55,7 @@ namespace Client
             if (Constants.Debug) Console.WriteLine($"Finished;");
         }
 
-        public static void ThreadFunc()
+        public static void SyncThreadJob()
         {
             while (Thread.CurrentThread.ThreadState != ThreadState.AbortRequested)
             {
