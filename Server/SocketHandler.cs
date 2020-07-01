@@ -60,6 +60,9 @@ namespace Server
             {
                 socketData.Socket.EndReceive(ar);
 
+                int dataSize = BitConverter.ToInt32(socketData.Buffer, 0);
+                socketData.SetBufferSize(dataSize); // расширяем буфер
+
                 socketData.Socket.BeginReceive(socketData.Buffer, 0, dataSize, SocketFlags.None,
                     OnClientContinueReceive,
                     socketData);
