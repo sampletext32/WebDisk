@@ -56,22 +56,19 @@ namespace Entities.TreeNodes
                 (CommandGetFileSizeResponse) Command.Deserialize(responseGetFileSizeCommandBytes);
 
             int fileSize = responseGetFileSizeCommand.GetData();
-
-            int pieceSize = Constants.SendingFilePieceSize;
-
             FileStream fs = new FileStream(Path.Combine(rootLocation, RelativeLocation, Name), FileMode.CreateNew);
 
             int received = 0;
             while (received != fileSize)
             {
                 int downloadSize = 0;
-                if (fileSize - received < pieceSize)
+                if (fileSize - received < Constants.SendingFilePieceSize)
                 {
                     downloadSize = fileSize - received;
                 }
                 else
                 {
-                    downloadSize = pieceSize;
+                    downloadSize = Constants.SendingFilePieceSize;
                 }
 
                 var getFilePieceCommand =
@@ -106,16 +103,15 @@ namespace Entities.TreeNodes
                 Console.WriteLine($"Performing upload {Name}");
                 // Файлы отличаются
                 FileStream fs = new FileStream(Path.Combine(rootLocation, RelativeLocation, Name), FileMode.Open);
-                int fileSize = (int) fs.Length;
-                int pieceSize = Constants.SendingFilePieceSize;
+                int fileSize = (int) fs.Length; // длина файла
 
-                byte[] buffer = new byte[pieceSize];
+                byte[] buffer = new byte[Constants.SendingFilePieceSize];
 
                 int sent = 0;
                 while (sent != fileSize)
                 {
                     int uploadSize = 0;
-                    if (fileSize - sent < pieceSize)
+                    if (fileSize - sent < Constants.SendingFilePieceSize)
                     {
                         uploadSize = fileSize - sent;
                         buffer = new byte[uploadSize];
