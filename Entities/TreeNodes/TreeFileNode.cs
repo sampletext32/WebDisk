@@ -79,7 +79,7 @@ namespace Entities.TreeNodes
             while (received != fileSize)
             {
                 // считаем размер пакета загрузки
-                int downloadSize = 0;
+                int downloadSize;
                 if (fileSize - received < Constants.SendingFilePieceSize)
                 {
                     downloadSize = fileSize - received;
@@ -139,7 +139,7 @@ namespace Entities.TreeNodes
                 while (sent != fileSize)
                 {
                     // считаем размер пакета отправки
-                    int uploadSize = 0;
+                    int uploadSize;
                     if (fileSize - sent < Constants.SendingFilePieceSize)
                     {
                         uploadSize = fileSize - sent;
