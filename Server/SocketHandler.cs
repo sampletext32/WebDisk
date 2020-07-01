@@ -11,23 +11,24 @@ namespace Server
 {
     public class SocketHandler
     {
-        private int _port;
+        public int Port { get; set; }
+
         private Socket _socketListener;
 
-        private List<SocketData> _datas;
+        private List<SocketData> _connectedClients;
 
         private IAsyncResult _acceptResult;
 
         public SocketHandler(int port)
         {
-            _port = port;
-            _datas = new List<SocketData>();
+            Port = port;
+            _connectedClients = new List<SocketData>();
         }
 
         public void Init()
         {
             _socketListener = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-            _socketListener.Bind(new IPEndPoint(IPAddress.Loopback, _port));
+            _socketListener.Bind(new IPEndPoint(IPAddress.Loopback, Port));
         }
 
         public void Listen()
@@ -49,7 +50,7 @@ namespace Server
                 SocketData socketData = new SocketData(socketClient, sizeof(int));
                 socketClient.BeginReceive(socketData.Buffer, 0, sizeof(int), SocketFlags.None, OnClientFirstReceive,
                     socketData);
-                _datas.Add(socketData);
+                _connectedClients.Add(socketData);
             }
             catch (SocketException)
             {
@@ -77,7 +78,7 @@ namespace Server
             {
                 Console.WriteLine("Client accidentaly disconnected");
                 socketData.Socket.Close();
-                _datas.Remove(socketData);
+                _connectedClients.Remove(socketData);
             }
         }
 
@@ -98,7 +99,7 @@ namespace Server
 
                     socketData.Socket.Shutdown(SocketShutdown.Both);
                     socketData.Socket.Close();
-                    _datas.Remove(socketData);
+                    _connectedClients.Remove(socketData);
                 }
                 else
                 {
@@ -112,7 +113,7 @@ namespace Server
             {
                 Console.WriteLine("Client accidentaly disconnected");
                 socketData.Socket.Close();
-                _datas.Remove(socketData);
+                _connectedClients.Remove(socketData);
             }
         }
 

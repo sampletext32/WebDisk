@@ -12,16 +12,17 @@ namespace Client
 {
     public class SocketHandler : IRequestPerformer
     {
-        private IPAddress _ipAddress;
-        public int _port;
+        public IPAddress IpAddress { get; private set; }
+        public int Port { get; set; }
+
         private Socket _socket;
 
         private IAsyncResult _connectResult;
 
         private SocketHandler(IPAddress ipAddress, int port)
         {
-            _ipAddress = ipAddress;
-            _port = port;
+            IpAddress = ipAddress;
+            Port = port;
         }
 
         public static SocketHandler Request(IPAddress ipAddress, int port)
@@ -36,7 +37,7 @@ namespace Client
 
         public bool Connect()
         {
-            _connectResult = _socket.BeginConnect(_ipAddress, _port, ar => { }, null);
+            _connectResult = _socket.BeginConnect(IpAddress, Port, ar => { }, null);
 
             while (!_connectResult.AsyncWaitHandle.WaitOne(Constants.ConnectionTimeoutMilliseconds))
             {
