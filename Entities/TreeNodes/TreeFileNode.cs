@@ -88,8 +88,8 @@ namespace Entities.TreeNodes
 
         public override void Upload(string rootLocation, IRequestPerformer requestPerformer, bool ignoreRoot = true)
         {
-            var fileComparationData = new FileComparationData(RelativeLocation, Name, Hash);
-            var isFileDiffersCommand = new CommandIsFilesEqual(fileComparationData);
+            var fileComparisonData = new FileComparisonData(RelativeLocation, Name, Hash);
+            var isFileDiffersCommand = new CommandIsFilesEqual(fileComparisonData);
             var isFileDiffersCommandBytes = isFileDiffersCommand.Serialize();
             var responseIsFileDiffersCommandBytes = requestPerformer.PerformRequest(isFileDiffersCommandBytes);
             var responseIsFilesEqualCommand =

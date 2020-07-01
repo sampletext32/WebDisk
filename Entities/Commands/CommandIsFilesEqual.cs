@@ -6,12 +6,12 @@ namespace Entities.Commands
     [Serializable]
     public class CommandIsFilesEqual : Command
     {
-        public FileComparationData GetData()
+        public FileComparisonData GetData()
         {
-            return (FileComparationData) Data;
+            return (FileComparisonData) Data;
         }
 
-        public CommandIsFilesEqual(FileComparationData fileComparationData) : base(fileComparationData)
+        public CommandIsFilesEqual(FileComparisonData fileComparisonData) : base(fileComparisonData)
         {
         }
     }

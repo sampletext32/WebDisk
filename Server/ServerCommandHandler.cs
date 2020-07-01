@@ -87,16 +87,16 @@ namespace Server
             else if (command is CommandIsFilesEqual commandIsFilesEqual)
             {
                 Console.WriteLine("Performing SocketCommandIsFilesEqual");
-                var fileComparationData = commandIsFilesEqual.GetData();
-                string filePath = Path.Combine(SharedFolderLocation, fileComparationData.RelativeLocation,
-                    fileComparationData.Name);
+                var fileComparisonData = commandIsFilesEqual.GetData();
+                string filePath = Path.Combine(SharedFolderLocation, fileComparisonData.RelativeLocation,
+                    fileComparisonData.Name);
                 if (File.Exists(filePath))
                 {
                     FileStream fs = new FileStream(filePath, FileMode.Open);
                     var localHash = TreeNode.CreateMD5(fs);
                     fs.Close();
 
-                    if (localHash == fileComparationData.Hash)
+                    if (localHash == fileComparisonData.Hash)
                     {
                         return new CommandIsFilesEqualResponse(true);
                     }

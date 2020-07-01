@@ -46,7 +46,7 @@
     <Compile Include="Commands\CommandCreateFolder.cs" />
     <Compile Include="Commands\CommandDeleteNonExistent.cs" />
     <Compile Include="Commands\CommandNone.cs" />
-    <Compile Include="DataObjects\FileComparationData.cs" />
+    <Compile Include="DataObjects\FileComparisonData.cs" />
     <Compile Include="DataObjects\FilePieceData.cs" />
     <Compile Include="DataObjects\FilePieceDataLocation.cs" />
     <Compile Include="DataObjects\FileSizeData.cs" />
