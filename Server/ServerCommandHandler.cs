@@ -75,10 +75,7 @@ namespace Server
                 }
 
                 fs.Write(filePieceData.Data, 0, filePieceData.Size);
-                if (filePieceData.Offset + filePieceData.Size == fs.Length)
-                {
-                    Console.WriteLine("Done File Upload");
-                }
+                fs.Flush(true);
 
                 fs.Close();
 
