@@ -10,7 +10,7 @@ namespace Client
     public class SocketHandler : IRequestPerformer
     {
         public IPAddress IpAddress { get; private set; }
-        public int Port { get; set; }
+        public int Port { get; private set; }
 
         private Socket _socket;
 

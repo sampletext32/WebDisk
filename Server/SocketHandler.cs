@@ -9,7 +9,7 @@ namespace Server
 {
     public class SocketHandler
     {
-        public int Port { get; set; }
+        public int Port { get; private set; }
 
         private Socket _socketListener;
 
