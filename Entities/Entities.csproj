@@ -41,35 +41,35 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="SocketCommands\CompareHashCommand.cs" />
+    <Compile Include="Commands\CommandCompareHash.cs" />
     <Compile Include="Constants.cs" />
-    <Compile Include="SocketCommands\CreateFolderCommand.cs" />
-    <Compile Include="SocketCommands\DeleteNonExistentCommand.cs" />
-    <Compile Include="SocketCommands\EmptyCommand.cs" />
-    <Compile Include="SocketCommands\FileComparationData.cs" />
+    <Compile Include="Commands\CommandCreateFolder.cs" />
+    <Compile Include="Commands\CommandDeleteNonExistent.cs" />
+    <Compile Include="Commands\CommandNone.cs" />
+    <Compile Include="DataObjects\FileComparationData.cs" />
     <Compile Include="DataObjects\FilePieceData.cs" />
     <Compile Include="DataObjects\FilePieceDataLocation.cs" />
     <Compile Include="DataObjects\FileSizeData.cs" />
     <Compile Include="DataObjects\FolderData.cs" />
-    <Compile Include="SocketCommands\GetFilePieceCommand.cs" />
-    <Compile Include="SocketCommands\GetFileSizeCommand.cs" />
-    <Compile Include="SocketCommands\GetFolderHtmlCommand.cs" />
-    <Compile Include="SocketCommands\GetTreeCommand.cs" />
-    <Compile Include="SocketCommands\HelloCommand.cs" />
+    <Compile Include="Commands\CommandGetFilePiece.cs" />
+    <Compile Include="Commands\CommandGetFileSize.cs" />
+    <Compile Include="Commands\CommandGetFolderHtml.cs" />
+    <Compile Include="Commands\CommandGetTree.cs" />
+    <Compile Include="Commands\CommandSimpleMessage.cs" />
     <Compile Include="IRequestPerformer.cs" />
-    <Compile Include="SocketCommands\IsFilesEqualCommand.cs" />
-    <Compile Include="SocketCommands\ResponseCompareHashCommand.cs" />
-    <Compile Include="SocketCommands\ResponseGetFilePieceCommand.cs" />
-    <Compile Include="SocketCommands\ResponseGetFileSizeCommand.cs" />
-    <Compile Include="SocketCommands\ResponseGetTreeCommand.cs" />
-    <Compile Include="SocketCommands\ResponseIsFilesEqualCommand.cs" />
-    <Compile Include="SocketCommands\SocketCommand.cs" />
+    <Compile Include="Commands\CommandIsFilesEqual.cs" />
+    <Compile Include="Commands\CommandCompareHashResponse.cs" />
+    <Compile Include="Commands\CommandGetFilePieceResponse.cs" />
+    <Compile Include="Commands\CommandGetFileSizeResponse.cs" />
+    <Compile Include="Commands\CommandGetTreeResponse.cs" />
+    <Compile Include="Commands\CommandIsFilesEqualResponse.cs" />
+    <Compile Include="Commands\Command.cs" />
     <Compile Include="TreeNodes\TreeAnalyzer.cs" />
     <Compile Include="TreeNodes\TreeFileNode.cs" />
     <Compile Include="TreeNodes\TreeFolderNode.cs" />
     <Compile Include="TreeNodes\TreeNode.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SocketCommands\UploadFilePieceCommand.cs" />
+    <Compile Include="Commands\CommandUploadFilePiece.cs" />
     <Compile Include="Utils.cs" />
   </ItemGroup>
   <ItemGroup />

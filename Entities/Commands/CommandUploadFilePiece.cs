@@ -1,17 +1,17 @@
 ﻿using System;
 using Entities.DataObjects;
 
-namespace Entities.SocketCommands
+namespace Entities.Commands
 {
     [Serializable]
-    public class UploadFilePieceCommand : SocketCommand
+    public class CommandUploadFilePiece : Command
     {
         public FilePieceData GetData()
         {
             return (FilePieceData) Data;
         }
 
-        public UploadFilePieceCommand(FilePieceData pieceData) : base(pieceData)
+        public CommandUploadFilePiece(FilePieceData pieceData) : base(pieceData)
         {
         }
     }

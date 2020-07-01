@@ -1,16 +1,16 @@
 ﻿using System;
 
-namespace Entities.SocketCommands
+namespace Entities.Commands
 {
     [Serializable]
-    public class CompareHashCommand : SocketCommand
+    public class CommandGetFolderHtml : Command
     {
         public string GetData()
         {
             return (string) Data;
         }
 
-        public CompareHashCommand(string data) : base(data)
+        public CommandGetFolderHtml(string data) : base(data)
         {
         }
     }

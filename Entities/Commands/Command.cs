@@ -2,10 +2,10 @@
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 
-namespace Entities.SocketCommands
+namespace Entities.Commands
 {
     [Serializable]
-    public abstract class SocketCommand
+    public abstract class Command
     {
         protected object Data { get; set; }
 
@@ -18,15 +18,15 @@ namespace Entities.SocketCommands
             return data;
         }
 
-        public static SocketCommand Deserialize(byte[] data)
+        public static Command Deserialize(byte[] data)
         {
             MemoryStream ms = new MemoryStream(data);
             BinaryFormatter formatter = new BinaryFormatter();
-            SocketCommand command = (SocketCommand) formatter.Deserialize(ms);
+            Command command = (Command) formatter.Deserialize(ms);
             return command;
         }
 
-        protected SocketCommand(object data)
+        protected Command(object data)
         {
             Data = data;
         }

@@ -1,17 +1,17 @@
 ﻿using System;
 using Entities.TreeNodes;
 
-namespace Entities.SocketCommands
+namespace Entities.Commands
 {
     [Serializable]
-    public class ResponseGetTreeCommand : SocketCommand
+    public class CommandGetTreeResponse : Command
     {
         public TreeNode GetData()
         {
             return (TreeNode) Data;
         }
 
-        public ResponseGetTreeCommand(TreeNode data) : base(data)
+        public CommandGetTreeResponse(TreeNode data) : base(data)
         {
         }
     }

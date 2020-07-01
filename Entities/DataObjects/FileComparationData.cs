@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Entities.SocketCommands
+namespace Entities.DataObjects
 {
     [Serializable]
     public class FileComparationData

@@ -1,16 +1,16 @@
 ﻿using System;
 
-namespace Entities.SocketCommands
+namespace Entities.Commands
 {
     [Serializable]
-    public class HelloCommand : SocketCommand
+    public class CommandCompareHash : Command
     {
         public string GetData()
         {
             return (string) Data;
         }
 
-        public HelloCommand(object data) : base(data)
+        public CommandCompareHash(string data) : base(data)
         {
         }
     }

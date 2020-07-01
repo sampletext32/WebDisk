@@ -1,17 +1,17 @@
 ﻿using System;
 using Entities.TreeNodes;
 
-namespace Entities.SocketCommands
+namespace Entities.Commands
 {
     [Serializable]
-    public class DeleteNonExistentCommand : SocketCommand
+    public class CommandDeleteNonExistent : Command
     {
         public TreeNode GetData()
         {
             return (TreeNode) Data;
         }
 
-        public DeleteNonExistentCommand(TreeNode treeNode) : base(treeNode)
+        public CommandDeleteNonExistent(TreeNode treeNode) : base(treeNode)
         {
         }
     }

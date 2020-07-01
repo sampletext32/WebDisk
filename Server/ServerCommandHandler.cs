@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 using Entities;
-using Entities.SocketCommands;
+using Entities.Commands;
 using Entities.TreeNodes;
 
 namespace Server
@@ -11,57 +11,57 @@ namespace Server
         private const string SharedFolderLocation = "C:\\Projects\\CSharp\\WebDisk\\Server\\bin\\Debug";
         private const string SharedFolderName = "shared";
 
-        public static SocketCommand Handle(SocketCommand command)
+        public static Command Handle(Command command)
         {
-            if (command is HelloCommand helloCommand)
+            if (command is CommandSimpleMessage commandSimpleMessage)
             {
                 Console.WriteLine("Performing Hello");
-                Console.WriteLine(helloCommand.GetData());
-                return new EmptyCommand();
+                Console.WriteLine(commandSimpleMessage.GetData());
+                return new CommandNone();
             }
-            else if (command is CompareHashCommand compareHashCommand)
+            else if (command is CommandCompareHash commandCompareHash)
             {
                 Console.WriteLine("Performing CompareHash");
                 var treeEquals =
                     TreeAnalyzer.BuildTree(SharedFolderLocation, SharedFolderName)
-                        .CalculateHash(SharedFolderLocation) == compareHashCommand.GetData();
-                ResponseCompareHashCommand responseCompareCommand = new ResponseCompareHashCommand(treeEquals);
-                return responseCompareCommand;
+                        .CalculateHash(SharedFolderLocation) == commandCompareHash.GetData();
+                CommandCompareHashResponse commandCompareHashResponse = new CommandCompareHashResponse(treeEquals);
+                return commandCompareHashResponse;
             }
-            else if (command is GetTreeCommand getTreeCommand)
+            else if (command is CommandGetTree commandGetTree)
             {
                 Console.WriteLine("Performing GetTree");
-                ResponseGetTreeCommand responseGetTreeCommand =
-                    new ResponseGetTreeCommand(TreeAnalyzer.BuildTree(SharedFolderLocation, SharedFolderName));
-                return responseGetTreeCommand;
+                CommandGetTreeResponse commandGetTreeResponse =
+                    new CommandGetTreeResponse(TreeAnalyzer.BuildTree(SharedFolderLocation, SharedFolderName));
+                return commandGetTreeResponse;
             }
-            else if (command is GetFileSizeCommand getFileSizeCommand)
+            else if (command is CommandGetFileSize commandGetFileSize)
             {
                 Console.WriteLine("Performing GetFileSize");
-                var fileSizeData = getFileSizeCommand.GetData();
+                var fileSizeData = commandGetFileSize.GetData();
                 FileInfo info = new FileInfo(Path.Combine(SharedFolderLocation, fileSizeData.RelativeLocation,
                     fileSizeData.Name));
                 int size = (int) info.Length;
-                ResponseGetFileSizeCommand responseGetFileSizeCommand = new ResponseGetFileSizeCommand(size);
-                return responseGetFileSizeCommand;
+                CommandGetFileSizeResponse commandGetFileSizeResponse = new CommandGetFileSizeResponse(size);
+                return commandGetFileSizeResponse;
             }
-            else if (command is GetFilePieceCommand getFilePieceCommand)
+            else if (command is CommandGetFilePiece commandGetFilePiece)
             {
                 Console.WriteLine("Performing GetFilePiece");
-                var filePieceData = getFilePieceCommand.GetData();
+                var filePieceData = commandGetFilePiece.GetData();
                 FileStream fs = new FileStream(Path.Combine(SharedFolderLocation, filePieceData.RelativeLocation,
                     filePieceData.Name), FileMode.Open);
                 fs.Seek(filePieceData.Offset, SeekOrigin.Begin);
                 byte[] buffer = new byte[filePieceData.Size];
                 fs.Read(buffer, 0, filePieceData.Size);
                 fs.Close();
-                ResponseGetFilePieceCommand responseGetFilePieceCommand = new ResponseGetFilePieceCommand(buffer);
-                return responseGetFilePieceCommand;
+                CommandGetFilePieceResponse commandGetFilePieceResponse = new CommandGetFilePieceResponse(buffer);
+                return commandGetFilePieceResponse;
             }
-            else if (command is UploadFilePieceCommand uploadFilePieceCommand)
+            else if (command is CommandUploadFilePiece commandUploadFilePiece)
             {
                 Console.WriteLine("Performing UploadFilePiece");
-                var filePieceData = uploadFilePieceCommand.GetData();
+                var filePieceData = commandUploadFilePiece.GetData();
                 FileStream fs;
                 if (filePieceData.Offset == 0)
                 {
@@ -82,12 +82,12 @@ namespace Server
 
                 fs.Close();
 
-                return new EmptyCommand();
+                return new CommandNone();
             }
-            else if (command is IsFilesEqualCommand isFileDiffersCommand)
+            else if (command is CommandIsFilesEqual commandIsFilesEqual)
             {
-                Console.WriteLine("Performing IsFilesEqualCommand");
-                var fileComparationData = isFileDiffersCommand.GetData();
+                Console.WriteLine("Performing SocketCommandIsFilesEqual");
+                var fileComparationData = commandIsFilesEqual.GetData();
                 string filePath = Path.Combine(SharedFolderLocation, fileComparationData.RelativeLocation,
                     fileComparationData.Name);
                 if (File.Exists(filePath))
@@ -98,23 +98,23 @@ namespace Server
 
                     if (localHash == fileComparationData.Hash)
                     {
-                        return new ResponseIsFilesEqualCommand(true);
+                        return new CommandIsFilesEqualResponse(true);
                     }
                     else
                     {
-                        return new ResponseIsFilesEqualCommand(false);
+                        return new CommandIsFilesEqualResponse(false);
                     }
                 }
                 else
                 {
-                    return new ResponseIsFilesEqualCommand(false);
+                    return new CommandIsFilesEqualResponse(false);
                 }
 
             }
-            else if (command is CreateFolderCommand createFolderCommand)
+            else if (command is CommandCreateFolder commandCreateFolder)
             {
                 Console.WriteLine("Performing CreateFolder");
-                var createFolderData = createFolderCommand.GetData();
+                var createFolderData = commandCreateFolder.GetData();
                 if (!Directory.Exists(Path.Combine(SharedFolderLocation, createFolderData.RelativeLocation,
                     createFolderData.Name)))
                 {
@@ -122,17 +122,17 @@ namespace Server
                         createFolderData.Name));
                 }
 
-                return new EmptyCommand();
+                return new CommandNone();
             }
-            else if (command is DeleteNonExistentCommand deleteNonExistentCommand)
+            else if (command is CommandDeleteNonExistent commandDeleteNonExistent)
             {
                 Console.WriteLine("Performing CreateFolder");
-                var remoteTree = deleteNonExistentCommand.GetData();
+                var remoteTree = commandDeleteNonExistent.GetData();
                 remoteTree.DeleteNonExistent(SharedFolderLocation);
-                return new EmptyCommand();
+                return new CommandNone();
             }
 
-            return new EmptyCommand();
+            return new CommandNone();
         }
     }
 }

@@ -1,17 +1,17 @@
 ﻿using System;
 using Entities.DataObjects;
 
-namespace Entities.SocketCommands
+namespace Entities.Commands
 {
     [Serializable]
-    public class GetFilePieceCommand : SocketCommand
+    public class CommandGetFilePiece : Command
     {
         public FilePieceDataLocation GetData()
         {
             return (FilePieceDataLocation) Data;
         }
 
-        public GetFilePieceCommand(FilePieceDataLocation filePieceData) : base(filePieceData)
+        public CommandGetFilePiece(FilePieceDataLocation filePieceData) : base(filePieceData)
         {
         }
     }

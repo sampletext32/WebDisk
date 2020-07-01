@@ -1,17 +1,17 @@
 ﻿using System;
 using Entities.DataObjects;
 
-namespace Entities.SocketCommands
+namespace Entities.Commands
 {
     [Serializable]
-    public class GetFileSizeCommand : SocketCommand
+    public class CommandGetFileSize : Command
     {
         public FileSizeData GetData()
         {
             return (FileSizeData) Data;
         }
 
-        public GetFileSizeCommand(FileSizeData fileSizeData) : base(fileSizeData)
+        public CommandGetFileSize(FileSizeData fileSizeData) : base(fileSizeData)
         {
         }
     }

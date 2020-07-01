@@ -1,17 +1,17 @@
 ﻿using System;
 using Entities.DataObjects;
 
-namespace Entities.SocketCommands
+namespace Entities.Commands
 {
     [Serializable]
-    public class CreateFolderCommand : SocketCommand
+    public class CommandCreateFolder : Command
     {
         public FolderData GetData()
         {
             return (FolderData) Data;
         }
 
-        public CreateFolderCommand(FolderData folderData) : base(folderData)
+        public CommandCreateFolder(FolderData folderData) : base(folderData)
         {
         }
     }

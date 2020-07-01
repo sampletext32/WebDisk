@@ -2,7 +2,7 @@
 using System.Net;
 using System.Net.Sockets;
 using Entities;
-using Entities.SocketCommands;
+using Entities.Commands;
 
 namespace Server
 {
@@ -107,9 +107,9 @@ namespace Server
             }
         }
 
-        private SocketCommand ProcessRequest(byte[] data)
+        private Command ProcessRequest(byte[] data)
         {
-            var socketCommand = SocketCommand.Deserialize(data);
+            var socketCommand = Command.Deserialize(data);
             var command = ServerCommandHandler.Handle(socketCommand);
             return command;
         }

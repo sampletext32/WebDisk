@@ -3,7 +3,7 @@ using System.IO;
 using System.Net;
 using System.Threading;
 using Entities;
-using Entities.SocketCommands;
+using Entities.Commands;
 using Entities.TreeNodes;
 
 namespace Client
@@ -20,7 +20,7 @@ namespace Client
                 Console.WriteLine($"{SharedFolderName} folder not found");
 
                 var treeCommand = SocketHandler.Request(IPAddress.Loopback, Constants.ConnectionPort)
-                    .PerformCommand<ResponseGetTreeCommand>(new GetTreeCommand());
+                    .PerformCommand<CommandGetTreeResponse>(new CommandGetTree());
 
                 var remoteTreeRoot = treeCommand.GetData();
                 remoteTreeRoot.Download(SharedFolderLocation,
@@ -36,7 +36,7 @@ namespace Client
             Thread syncThread = new Thread(ThreadFunc);
             syncThread.Start();
 
-            // HelloCommand command = new HelloCommand("Hello, i am migga nigga");
+            // CommandSimpleMessage command = new CommandSimpleMessage("Hello, i am migga nigga");
             // Handler.PerformCommand(command);
 
             Console.WriteLine("Press any key to exit!");
@@ -53,10 +53,10 @@ namespace Client
 
                 var hash = localTree.CalculateHash(SharedFolderLocation);
 
-                CompareHashCommand compareHashCommand = new CompareHashCommand(hash);
+                CommandCompareHash socketCommandCompareHash = new CommandCompareHash(hash);
                 var socketHandler = SocketHandler.Request(IPAddress.Loopback, 11771);
                 var responseCompareHashCommand =
-                    socketHandler.PerformCommand<ResponseCompareHashCommand>(compareHashCommand);
+                    socketHandler.PerformCommand<CommandCompareHashResponse>(socketCommandCompareHash);
                 if (responseCompareHashCommand.GetData() == true)
                 {
                     Console.WriteLine("Folders equals");
@@ -66,9 +66,9 @@ namespace Client
                     Console.WriteLine("Found mismatch, performing sync");
 
                     Console.WriteLine("Deleting folders");
-                    DeleteNonExistentCommand deleteNonExistentCommand = new DeleteNonExistentCommand(localTree);
+                    CommandDeleteNonExistent socketCommandDeleteNonExistent = new CommandDeleteNonExistent(localTree);
                     var deleteNonExistentCommandResponse =
-                        socketHandler.PerformCommand<EmptyCommand>(deleteNonExistentCommand);
+                        socketHandler.PerformCommand<CommandNone>(socketCommandDeleteNonExistent);
 
                     Console.WriteLine("Uploading tree");
                     localTree.Upload(SharedFolderLocation, SocketHandler.Request(IPAddress.Loopback, 11771), false);

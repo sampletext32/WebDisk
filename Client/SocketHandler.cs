@@ -3,7 +3,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 using Entities;
-using Entities.SocketCommands;
+using Entities.Commands;
 
 namespace Client
 {
@@ -52,7 +52,7 @@ namespace Client
             }
         }
 
-        public T PerformCommand<T>(SocketCommand command) where T : SocketCommand
+        public T PerformCommand<T>(Command command) where T : Command
         {
             var bytes = command.Serialize();
 
@@ -63,9 +63,9 @@ namespace Client
             return response;
         }
 
-        private T ProcessResponse<T>(byte[] data) where T : SocketCommand
+        private T ProcessResponse<T>(byte[] data) where T : Command
         {
-            var socketCommand = SocketCommand.Deserialize(data);
+            var socketCommand = Command.Deserialize(data);
             return (T) socketCommand;
         }
 

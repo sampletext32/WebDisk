@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 using Entities.DataObjects;
-using Entities.SocketCommands;
+using Entities.Commands;
 
 namespace Entities.TreeNodes
 {
@@ -44,11 +44,11 @@ namespace Entities.TreeNodes
         public override void Download(string rootLocation, IRequestPerformer requestPerformer, bool ignoreRoot = true)
         {
             var fileSizeData = new FileSizeData(RelativeLocation, Name);
-            var getFileSizeCommand = new GetFileSizeCommand(fileSizeData);
+            var getFileSizeCommand = new CommandGetFileSize(fileSizeData);
             var getFileSizeCommandBytes = getFileSizeCommand.Serialize();
             var responseGetFileSizeCommandBytes = requestPerformer.PerformRequest(getFileSizeCommandBytes);
             var responseGetFileSizeCommand =
-                (ResponseGetFileSizeCommand) SocketCommand.Deserialize(responseGetFileSizeCommandBytes);
+                (CommandGetFileSizeResponse) Command.Deserialize(responseGetFileSizeCommandBytes);
 
             int fileSize = responseGetFileSizeCommand.GetData();
 
@@ -70,11 +70,11 @@ namespace Entities.TreeNodes
                 }
 
                 var getFilePieceCommand =
-                    new GetFilePieceCommand(new FilePieceDataLocation(RelativeLocation, Name, received, downloadSize));
+                    new CommandGetFilePiece(new FilePieceDataLocation(RelativeLocation, Name, received, downloadSize));
                 var getFilePieceCommandBytes = getFilePieceCommand.Serialize();
                 var responseGetFilePieceCommandBytes = requestPerformer.PerformRequest(getFilePieceCommandBytes);
                 var responseGetFilePieceCommand =
-                    (ResponseGetFilePieceCommand) SocketCommand.Deserialize(responseGetFilePieceCommandBytes);
+                    (CommandGetFilePieceResponse) Command.Deserialize(responseGetFilePieceCommandBytes);
 
                 var pieceBytes = responseGetFilePieceCommand.GetData();
 
@@ -89,11 +89,11 @@ namespace Entities.TreeNodes
         public override void Upload(string rootLocation, IRequestPerformer requestPerformer, bool ignoreRoot = true)
         {
             var fileComparationData = new FileComparationData(RelativeLocation, Name, Hash);
-            var isFileDiffersCommand = new IsFilesEqualCommand(fileComparationData);
+            var isFileDiffersCommand = new CommandIsFilesEqual(fileComparationData);
             var isFileDiffersCommandBytes = isFileDiffersCommand.Serialize();
             var responseIsFileDiffersCommandBytes = requestPerformer.PerformRequest(isFileDiffersCommandBytes);
             var responseIsFilesEqualCommand =
-                (ResponseIsFilesEqualCommand) SocketCommand.Deserialize(responseIsFileDiffersCommandBytes);
+                (CommandIsFilesEqualResponse) Command.Deserialize(responseIsFileDiffersCommandBytes);
             if (!responseIsFilesEqualCommand.GetData())
             {
                 Console.WriteLine($"Performing upload {Name}");
@@ -121,7 +121,7 @@ namespace Entities.TreeNodes
                     fs.Read(buffer, 0, uploadSize);
 
                     var uploadFilePieceCommand =
-                        new UploadFilePieceCommand(new FilePieceData(RelativeLocation, Name, sent, uploadSize, buffer));
+                        new CommandUploadFilePiece(new FilePieceData(RelativeLocation, Name, sent, uploadSize, buffer));
                     var uploadFilePieceCommandBytes = uploadFilePieceCommand.Serialize();
                     var responseUploadFilePieceCommandBytes =
                         requestPerformer.PerformRequest(uploadFilePieceCommandBytes);

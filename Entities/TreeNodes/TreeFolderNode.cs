@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using Entities.DataObjects;
-using Entities.SocketCommands;
+using Entities.Commands;
 
 namespace Entities.TreeNodes
 {
@@ -84,7 +84,7 @@ namespace Entities.TreeNodes
         public override void Upload(string rootLocation, IRequestPerformer requestPerformer, bool ignoreRoot = true)
         {
             var folderData = new FolderData(RelativeLocation, Name);
-            var createFolderCommand = new CreateFolderCommand(folderData);
+            var createFolderCommand = new CommandCreateFolder(folderData);
             var createFolderCommandBytes = createFolderCommand.Serialize();
             var responseCreateFolderBytes = requestPerformer.PerformRequest(createFolderCommandBytes);
             // ignore response, it's empty
