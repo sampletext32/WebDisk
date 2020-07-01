@@ -13,8 +13,8 @@ namespace Client
 {
     class Program
     {
-        public static readonly string SharedFolderLocation = "C:\\Projects\\CSharp\\WebDisk\\Client\\bin\\Debug";
-        public static readonly string SharedFolderName = "shared";
+        private const string SharedFolderLocation = "C:\\Projects\\CSharp\\WebDisk\\Client\\bin\\Debug";
+        private const string SharedFolderName = "shared";
 
         static void Main(string[] args)
         {

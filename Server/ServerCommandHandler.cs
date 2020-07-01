@@ -11,8 +11,8 @@ namespace Server
 {
     public class ServerCommandHandler
     {
-        private static string SharedFolderLocation = "C:\\Projects\\CSharp\\WebDisk\\Server\\bin\\Debug";
-        private static string SharedFolderName = "shared";
+        private const string SharedFolderLocation = "C:\\Projects\\CSharp\\WebDisk\\Server\\bin\\Debug";
+        private const string SharedFolderName = "shared";
 
         public static SocketCommand Handle(SocketCommand command)
         {
