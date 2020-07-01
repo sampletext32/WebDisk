@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using Entities;
+using Entities.SocketCommands;
 using Entities.TreeNodes;
 
 namespace Server

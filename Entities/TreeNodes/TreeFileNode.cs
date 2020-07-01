@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using Entities.SocketCommands;
 
 namespace Entities.TreeNodes
 {

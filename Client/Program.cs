@@ -3,6 +3,7 @@ using System.IO;
 using System.Net;
 using System.Threading;
 using Entities;
+using Entities.SocketCommands;
 using Entities.TreeNodes;
 
 namespace Client

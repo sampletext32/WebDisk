@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
 using Entities;
+using Entities.SocketCommands;
 
 namespace Server
 {
