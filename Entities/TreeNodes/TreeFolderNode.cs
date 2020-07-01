@@ -107,7 +107,7 @@ namespace Entities.TreeNodes
 
             foreach (var directory in directories)
             {
-                var directoryName = Path.GetDirectoryName(directory);
+                var directoryName = directory.Substring(directory.LastIndexOf(Path.DirectorySeparatorChar) + 1);
                 var child = _children.FirstOrDefault(t => t.Name == directoryName);
                 if (child == null)
                 {
