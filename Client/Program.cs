@@ -92,7 +92,7 @@ namespace Client
 
                 if (Constants.Debug) Console.WriteLine($"Sync Thread Pulse Finished, Waiting;");
 
-                Thread.Sleep(10 * 1000);
+                Thread.Sleep(Constants.ClientSynchronizationDelayMilliseconds);
             }
         }
     }
