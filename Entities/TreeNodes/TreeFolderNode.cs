@@ -86,7 +86,7 @@ namespace Entities.TreeNodes
             var createFolderCommandBytes = createFolderCommand.Serialize();
             var responseCreateFolderBytes = requestPerformer.PerformRequest(createFolderCommandBytes);
             // ignore response, it's empty
-            
+
             foreach (var b in _children.Where(t => t is TreeFolderNode))
             {
                 b.Upload(rootLocation, requestPerformer, false);

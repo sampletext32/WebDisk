@@ -232,7 +232,7 @@ namespace Entities
         {
         }
     }
-    
+
     [Serializable]
     public class FolderData
     {
@@ -251,7 +251,7 @@ namespace Entities
     {
         public FolderData GetData()
         {
-            return (FolderData)Data;
+            return (FolderData) Data;
         }
 
         public CreateFolderCommand(FolderData folderData) : base(folderData)

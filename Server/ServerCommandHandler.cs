@@ -89,7 +89,7 @@ namespace Server
             }
             else if (command is IsFilesEqualCommand isFileDiffersCommand)
             {
-                Console.WriteLine("Performing UploadFilePiece");
+                Console.WriteLine("Performing IsFilesEqualCommand");
                 var fileComparationData = isFileDiffersCommand.GetData();
                 string filePath = Path.Combine(SharedFolderLocation, fileComparationData.RelativeLocation,
                     fileComparationData.Name);
