@@ -124,8 +124,8 @@ namespace Server
                 {
                     FileStream fs = new FileStream(path, FileMode.Open);
 
-                    var localHash = TreeNode.CreateMD5(fs);
                     fs.Close();
+                    var localHash = Utils.CreateMD5(fs);
 
                     if (localHash == fileComparisonData.Hash)
                     {

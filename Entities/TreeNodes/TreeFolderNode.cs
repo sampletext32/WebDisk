@@ -27,7 +27,7 @@ namespace Entities.TreeNodes
         {
             if (Constants.Debug) Console.WriteLine($"CalculateHash Folder: {{ {this} }};");
             string xml = WrapHashedXML(rootLocation, false);
-            return CreateMD5(xml);
+            return Utils.CreateMD5(xml);
         }
 
         public override string WrapHtml(string rootLocation)

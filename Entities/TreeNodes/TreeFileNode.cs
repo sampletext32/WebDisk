@@ -19,7 +19,7 @@ namespace Entities.TreeNodes
             using (FileStream stream =
                 new FileStream(Path.Combine(rootLocation, RelativeLocation, Name), FileMode.Open))
             {
-                hash = CreateMD5(stream);
+                hash = Utils.CreateMD5(stream);
             }
 
             Hash = hash;
