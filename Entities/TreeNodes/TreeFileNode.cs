@@ -28,7 +28,7 @@ namespace Entities.TreeNodes
         public override string WrapHtml(string rootLocation)
         {
             string hash = CalculateHash(rootLocation);
-            string selfHtml = $"<li>{hash}</li>";
+            string selfHtml = $"<li>{Name} {hash}</li>";
 
             return selfHtml;
         }
@@ -37,7 +37,7 @@ namespace Entities.TreeNodes
         {
             string hash = CalculateHash(rootLocation);
 
-            string selfHtml = $"<file>{hash}</file>";
+            string selfHtml = $"<file>{Name} {hash}</file>";
             return selfHtml;
         }
 
