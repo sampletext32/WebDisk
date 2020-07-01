@@ -59,9 +59,6 @@ namespace Server
             try
             {
                 socketData.Socket.EndReceive(ar);
-                byte[] data = socketData.Buffer;
-                int dataSize = BitConverter.ToInt32(data, 0);
-                socketData.SetBufferSize(dataSize);
 
                 socketData.Socket.BeginReceive(socketData.Buffer, 0, dataSize, SocketFlags.None,
                     OnClientContinueReceive,
