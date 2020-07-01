@@ -40,7 +40,7 @@ namespace Entities.TreeNodes
 
         private TreeNode RetrieveFolder(string absoluteRootLocation, string relativeLocation, string name)
         {
-            if (!PathIsDirectory(Path.Combine(absoluteRootLocation, relativeLocation, name)))
+            if (!Utils.PathIsDirectory(Path.Combine(absoluteRootLocation, relativeLocation, name)))
             {
                 throw new ArgumentException("Folder With Invalid Path Found"); //Not Possible In Real Scenario
             }
@@ -88,19 +88,6 @@ namespace Entities.TreeNodes
             }
 
             return currentFolderNode;
-        }
-
-        private static bool PathIsDirectory(string path)
-        {
-            try
-            {
-                FileAttributes fa = File.GetAttributes(path);
-                return fa.HasFlag(FileAttributes.Directory);
-            }
-            catch
-            {
-                return false;
-            }
         }
     }
 }

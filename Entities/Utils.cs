@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net.Sockets;
 using System.Text;
@@ -35,6 +36,19 @@ namespace Entities
             }
 
             return buffer;
+        }
+        
+        public static bool PathIsDirectory(string path)
+        {
+            try
+            {
+                FileAttributes fa = File.GetAttributes(path);
+                return fa.HasFlag(FileAttributes.Directory);
+            }
+            catch
+            {
+                return false;
+            }
         }
     }
 }
