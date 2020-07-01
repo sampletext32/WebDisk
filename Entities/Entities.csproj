@@ -47,10 +47,10 @@
     <Compile Include="SocketCommands\DeleteNonExistentCommand.cs" />
     <Compile Include="SocketCommands\EmptyCommand.cs" />
     <Compile Include="SocketCommands\FileComparationData.cs" />
-    <Compile Include="FilePieceData.cs" />
-    <Compile Include="FilePieceDataLocation.cs" />
-    <Compile Include="FileSizeData.cs" />
-    <Compile Include="FolderData.cs" />
+    <Compile Include="DataObjects\FilePieceData.cs" />
+    <Compile Include="DataObjects\FilePieceDataLocation.cs" />
+    <Compile Include="DataObjects\FileSizeData.cs" />
+    <Compile Include="DataObjects\FolderData.cs" />
     <Compile Include="SocketCommands\GetFilePieceCommand.cs" />
     <Compile Include="SocketCommands\GetFileSizeCommand.cs" />
     <Compile Include="SocketCommands\GetFolderHtmlCommand.cs" />

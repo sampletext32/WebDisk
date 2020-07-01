@@ -1,4 +1,5 @@
 ﻿using System;
+using Entities.DataObjects;
 
 namespace Entities.SocketCommands
 {
