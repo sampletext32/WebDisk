@@ -17,7 +17,9 @@ namespace Client
         {
             if (!Directory.Exists(Path.Combine(SharedFolderLocation, SharedFolderName)))
             {
-                Console.WriteLine($"{SharedFolderName} folder not found");
+                if (Constants.Debug) Console.WriteLine($"Shared Folder Not Found: {{ {SharedFolderName} in {SharedFolderLocation} }};");
+
+                if (Constants.Debug) Console.WriteLine($"Started Tree Downloading;");
 
                 var treeCommand = SocketHandler.Request(IPAddress.Loopback, Constants.ConnectionPort)
                     .PerformCommand<CommandGetTreeResponse>(new CommandGetTree());
@@ -25,16 +27,20 @@ namespace Client
                 var remoteTreeRoot = treeCommand.GetData();
                 remoteTreeRoot.Download(SharedFolderLocation,
                     SocketHandler.Request(IPAddress.Loopback, Constants.ConnectionPort), false);
+
+                if (Constants.Debug) Console.WriteLine($"Finished Tree Downloading;");
             }
             else
             {
-                Console.WriteLine($"Found {SharedFolderName} folder");
+                if (Constants.Debug) Console.WriteLine($"Shared Folder Found;");
             }
 
-            Console.WriteLine("Starting sync thread");
+            if (Constants.Debug) Console.WriteLine($"Starting Sync Thread;");
 
             Thread syncThread = new Thread(ThreadFunc);
             syncThread.Start();
+
+            Console.WriteLine("Started Client");
 
             // CommandSimpleMessage command = new CommandSimpleMessage("Hello, i am migga nigga");
             // Handler.PerformCommand(command);
@@ -42,16 +48,24 @@ namespace Client
             Console.WriteLine("Press any key to exit!");
             Console.ReadKey();
 
+            if (Constants.Debug) Console.WriteLine($"Aborting Sync Thread;");
+
             syncThread.Abort();
+
+            if (Constants.Debug) Console.WriteLine($"Finished;");
         }
 
         public static void ThreadFunc()
         {
             while (Thread.CurrentThread.ThreadState != ThreadState.AbortRequested)
             {
+                if (Constants.Debug) Console.WriteLine($"Sync Thread Pulse Start;");
+
                 var localTree = TreeAnalyzer.BuildTree(SharedFolderLocation, SharedFolderName);
 
                 var hash = localTree.CalculateHash(SharedFolderLocation);
+                
+                if (Constants.Debug) Console.WriteLine($"Perform CompareHash Command;");
 
                 CommandCompareHash socketCommandCompareHash = new CommandCompareHash(hash);
                 var socketHandler = SocketHandler.Request(IPAddress.Loopback, Constants.ConnectionPort);
@@ -59,20 +73,24 @@ namespace Client
                     socketHandler.PerformCommand<CommandCompareHashResponse>(socketCommandCompareHash);
                 if (responseCompareHashCommand.GetData() == true)
                 {
-                    Console.WriteLine("Folders equals");
+                    if (Constants.Debug) Console.WriteLine($"Sync Pulse Everything Up-to-date;");
                 }
                 else
                 {
-                    Console.WriteLine("Found mismatch, performing sync");
+                    if (Constants.Debug) Console.WriteLine($"Sync Pulse Found Mismatch;");
 
-                    Console.WriteLine("Deleting folders");
+                    if (Constants.Debug) Console.WriteLine($"Perform DeleteNonExistent Command;");
+
                     CommandDeleteNonExistent socketCommandDeleteNonExistent = new CommandDeleteNonExistent(localTree);
                     var deleteNonExistentCommandResponse =
                         socketHandler.PerformCommand<CommandNone>(socketCommandDeleteNonExistent);
 
-                    Console.WriteLine("Uploading tree");
+                    if (Constants.Debug) Console.WriteLine($"Perform UploadTree Command;");
+
                     localTree.Upload(SharedFolderLocation, SocketHandler.Request(IPAddress.Loopback, Constants.ConnectionPort), false);
                 }
+
+                if (Constants.Debug) Console.WriteLine($"Sync Thread Pulse Finished, Waiting;");
 
                 Thread.Sleep(10 * 1000);
             }

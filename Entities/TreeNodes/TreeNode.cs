@@ -72,7 +72,6 @@ namespace Entities.TreeNodes
 
         public virtual string CalculateHash(string rootLocation)
         {
-            Debug.WriteLine("CalculateHash on base");
             return "Unsupported call on base";
         }
 

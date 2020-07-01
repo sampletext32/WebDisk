@@ -25,12 +25,14 @@ namespace Entities.TreeNodes
 
         public override string CalculateHash(string rootLocation)
         {
+            if (Constants.Debug) Console.WriteLine($"CalculateHash Folder: {{ {this} }};");
             string xml = WrapHashedXML(rootLocation, false);
             return CreateMD5(xml);
         }
 
         public override string WrapHtml(string rootLocation)
         {
+            if (Constants.Debug) Console.WriteLine($"WrapHtml Folder: {{ {this} }};");
             StringBuilder childrenHtmlBuilder = new StringBuilder();
             foreach (var child in _children)
             {
@@ -44,6 +46,7 @@ namespace Entities.TreeNodes
 
         public override string WrapHashedXML(string rootLocation, bool ignoreRoot = true)
         {
+            if (Constants.Debug) Console.WriteLine($"WrapHashedXML Folder: {{ {this} }};");
             StringBuilder childrenHtmlBuilder = new StringBuilder();
             foreach (var child in _children)
             {
@@ -65,6 +68,8 @@ namespace Entities.TreeNodes
 
         public override void Download(string rootLocation, IRequestPerformer requestPerformer, bool ignoreRoot = true)
         {
+            if (Constants.Debug) Console.WriteLine($"Download Folder: {{ {this} }};");
+
             if (!ignoreRoot)
             {
                 Directory.CreateDirectory(Path.Combine(rootLocation, RelativeLocation, Name));
@@ -83,6 +88,8 @@ namespace Entities.TreeNodes
 
         public override void Upload(string rootLocation, IRequestPerformer requestPerformer, bool ignoreRoot = true)
         {
+            if (Constants.Debug) Console.WriteLine($"Upload Folder: {{ {this} }};");
+
             var folderData = new FolderData(RelativeLocation, Name);
             var createFolderCommand = new CommandCreateFolder(folderData);
             var createFolderCommandBytes = createFolderCommand.Serialize();
@@ -102,6 +109,8 @@ namespace Entities.TreeNodes
 
         public override void DeleteNonExistent(string rootLocation, bool ignoreRoot = true)
         {
+            if (Constants.Debug) Console.WriteLine($"DeleteNonExistent Folder: {{ {this} }};");
+
             var directories = Directory.EnumerateDirectories(Path.Combine(rootLocation, RelativeLocation, Name));
             var files = Directory.EnumerateFiles(Path.Combine(rootLocation, RelativeLocation, Name));
 
@@ -113,6 +122,7 @@ namespace Entities.TreeNodes
                 {
                     // папка не найдена - удаляем саму папку рекурсивно
                     Directory.Delete(directory, true);
+                    Console.WriteLine($"Server deleted folder: {{ {directoryName} }}");
                 }
                 else
                 {
@@ -129,6 +139,7 @@ namespace Entities.TreeNodes
                 {
                     // серверный файл на клиенте отсутствует - удаляем
                     File.Delete(file);
+                    Console.WriteLine($"Server deleted file: {{ {fileName} }}");
                 }
                 else
                 {

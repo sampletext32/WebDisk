@@ -14,6 +14,7 @@ namespace Entities.TreeNodes
 
         public override string CalculateHash(string rootLocation)
         {
+            if (Constants.Debug) Console.WriteLine($"CalculateHash File: {{ {this} }};");
             string hash;
             using (FileStream stream =
                 new FileStream(Path.Combine(rootLocation, RelativeLocation, Name), FileMode.Open))
@@ -27,6 +28,7 @@ namespace Entities.TreeNodes
 
         public override string WrapHtml(string rootLocation)
         {
+            if (Constants.Debug) Console.WriteLine($"WrapHtml File: {{ {this} }};");
             string hash = CalculateHash(rootLocation);
             string selfHtml = $"<li>{Name} {hash}</li>";
 
@@ -35,6 +37,7 @@ namespace Entities.TreeNodes
 
         public override string WrapHashedXML(string rootLocation, bool ignoreRoot = true)
         {
+            if (Constants.Debug) Console.WriteLine($"WrapHashedXML File: {{ {this} }};");
             string hash = CalculateHash(rootLocation);
 
             string selfHtml = $"<file>{Name} {hash}</file>";
@@ -43,6 +46,8 @@ namespace Entities.TreeNodes
 
         public override void Download(string rootLocation, IRequestPerformer requestPerformer, bool ignoreRoot = true)
         {
+            if (Constants.Debug) Console.WriteLine($"Download File: {{ {this} }};");
+
             var fileSizeData = new FileSizeData(RelativeLocation, Name);
             var getFileSizeCommand = new CommandGetFileSize(fileSizeData);
             var getFileSizeCommandBytes = getFileSizeCommand.Serialize();
@@ -88,6 +93,8 @@ namespace Entities.TreeNodes
 
         public override void Upload(string rootLocation, IRequestPerformer requestPerformer, bool ignoreRoot = true)
         {
+            if (Constants.Debug) Console.WriteLine($"Upload File: {{ {this} }};");
+
             var fileComparisonData = new FileComparisonData(RelativeLocation, Name, Hash);
             var isFileDiffersCommand = new CommandIsFilesEqual(fileComparisonData);
             var isFileDiffersCommandBytes = isFileDiffersCommand.Serialize();

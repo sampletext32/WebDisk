@@ -8,6 +8,8 @@ namespace Entities
     {
         public static void SendWithSizeHeader(Socket socket, byte[] data)
         {
+            if (Constants.Debug) Console.WriteLine($"SendWithSizeHeader DataSize: {{ {data.Length} }};");
+
             socket.Send(BitConverter.GetBytes(data.Length), 0, sizeof(int), SocketFlags.None);
 
             int sent = 0;
@@ -19,6 +21,8 @@ namespace Entities
 
         public static byte[] ReceiveWithSizeHeader(Socket socket)
         {
+            if (Constants.Debug) Console.WriteLine($"ReceiveWithSizeHeader Called;");
+
             byte[] buffer = new byte[4];
             socket.Receive(buffer, 0, sizeof(int), SocketFlags.None);
             int dataSize = BitConverter.ToInt32(buffer, 0);
@@ -36,6 +40,8 @@ namespace Entities
         
         public static bool PathIsDirectory(string path)
         {
+            if (Constants.Debug) Console.WriteLine($"PathIsDirectory path: {{ {path} }};");
+
             try
             {
                 FileAttributes fa = File.GetAttributes(path);

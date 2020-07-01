@@ -18,6 +18,8 @@ namespace Entities.TreeNodes
 
         public static TreeNode BuildTree(string absoluteFolderLocation, string folderName)
         {
+            if (Constants.Debug) Console.WriteLine($"BuildTree Folder: {{ {absoluteFolderLocation}\\{folderName} }};");
+
             TreeAnalyzer analyzer = new TreeAnalyzer();
             analyzer.Retrieve(absoluteFolderLocation, folderName);
             return analyzer.GetTree();
@@ -40,6 +42,8 @@ namespace Entities.TreeNodes
 
         private TreeNode RetrieveFolder(string absoluteRootLocation, string relativeLocation, string name)
         {
+            if (Constants.Debug) Console.WriteLine($"RetrieveFolder Folder: {{ {absoluteRootLocation}\\{relativeLocation}\\{name} }};");
+
             if (!Utils.PathIsDirectory(Path.Combine(absoluteRootLocation, relativeLocation, name)))
             {
                 throw new ArgumentException("Folder With Invalid Path Found"); //Not Possible In Real Scenario
