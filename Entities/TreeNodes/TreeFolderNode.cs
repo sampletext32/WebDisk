@@ -111,6 +111,7 @@ namespace Entities.TreeNodes
                 var child = _children.FirstOrDefault(t => t.Name == directoryName);
                 if (child == null)
                 {
+                    // папка не найдена - удаляем саму папку рекурсивно
                     Directory.Delete(directory, true);
                 }
                 else
@@ -126,6 +127,7 @@ namespace Entities.TreeNodes
                 var child = _children.FirstOrDefault(t => t.Name == fileName);
                 if (child == null)
                 {
+                    // серверный файл на клиенте отсутствует - удаляем
                     File.Delete(file);
                 }
                 else

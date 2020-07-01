@@ -134,7 +134,7 @@ namespace Entities.TreeNodes
             }
             else
             {
-                Console.WriteLine($"File is in sync {Name}");
+                Console.WriteLine($"File is in sync {this}");
             }
         }
     }
