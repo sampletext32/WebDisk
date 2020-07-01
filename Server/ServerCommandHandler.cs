@@ -45,8 +45,15 @@ namespace Server
                 var fileSizeData = commandGetFileSize.GetData();
                 FileInfo info = new FileInfo(Path.Combine(SharedFolderLocation, fileSizeData.RelativeLocation,
                     fileSizeData.Name));
-                int size = (int) info.Length;
-                CommandGetFileSizeResponse commandGetFileSizeResponse = new CommandGetFileSizeResponse(size);
+
+                if (!info.Exists)
+                {
+                    throw new InvalidOperationException("File doesn't exist");
+                }
+
+                int size = (int) info.Length; // получаем размер файла
+                CommandGetFileSizeResponse
+                    commandGetFileSizeResponse = new CommandGetFileSizeResponse(size); // запаковываем и возвращаем
                 return commandGetFileSizeResponse;
             }
             else if (command is CommandGetFilePiece commandGetFilePiece)
@@ -54,9 +61,18 @@ namespace Server
                 if (Constants.Debug) Console.WriteLine("Server Processing { CommandGetFilePiece }");
 
                 var filePieceData = commandGetFilePiece.GetData();
-                FileStream fs = new FileStream(Path.Combine(SharedFolderLocation, filePieceData.RelativeLocation,
-                    filePieceData.Name), FileMode.Open);
-                fs.Seek(filePieceData.Offset, SeekOrigin.Begin);
+
+                var path = Path.Combine(SharedFolderLocation, filePieceData.RelativeLocation, filePieceData.Name);
+
+                if (!File.Exists(path))
+                {
+                    throw new InvalidOperationException("File doesn't exist");
+                }
+
+                // открываем поток к файлу
+                FileStream fs = new FileStream(path, FileMode.Open);
+                fs.Seek(filePieceData.Offset, SeekOrigin.Begin); // смещаемся от начало на заданный отступ
+
                 byte[] buffer = new byte[filePieceData.Size];
                 fs.Read(buffer, 0, filePieceData.Size);
                 fs.Close();
@@ -68,8 +84,16 @@ namespace Server
                 if (Constants.Debug) Console.WriteLine("Server Processing { CommandUploadFilePiece }");
 
                 var filePieceData = commandUploadFilePiece.GetData();
+
                 var path = Path.Combine(SharedFolderLocation, filePieceData.RelativeLocation, filePieceData.Name);
+
+                if (!File.Exists(path))
+                {
+                    throw new InvalidOperationException("File doesn't exist");
+                }
+
                 FileStream fs;
+
                 if (filePieceData.Offset == 0)
                 {
                     Console.WriteLine($"Server created file: {{ {filePieceData.Name} }}");
@@ -92,11 +116,14 @@ namespace Server
                 if (Constants.Debug) Console.WriteLine("Server Processing { CommandIsFilesEqual }");
 
                 var fileComparisonData = commandIsFilesEqual.GetData();
-                string filePath = Path.Combine(SharedFolderLocation, fileComparisonData.RelativeLocation,
+
+                string path = Path.Combine(SharedFolderLocation, fileComparisonData.RelativeLocation,
                     fileComparisonData.Name);
-                if (File.Exists(filePath))
+
+                if (File.Exists(path))
                 {
-                    FileStream fs = new FileStream(filePath, FileMode.Open);
+                    FileStream fs = new FileStream(path, FileMode.Open);
+
                     var localHash = TreeNode.CreateMD5(fs);
                     fs.Close();
 
@@ -119,11 +146,11 @@ namespace Server
                 if (Constants.Debug) Console.WriteLine("Server Processing { CommandCreateFolder }");
 
                 var createFolderData = commandCreateFolder.GetData();
-                if (!Directory.Exists(Path.Combine(SharedFolderLocation, createFolderData.RelativeLocation,
-                    createFolderData.Name)))
+
+                var path = Path.Combine(SharedFolderLocation, createFolderData.RelativeLocation, createFolderData.Name);
+
+                if (!Directory.Exists(path))
                 {
-                    var path = Path.Combine(SharedFolderLocation, createFolderData.RelativeLocation,
-                        createFolderData.Name);
                     Directory.CreateDirectory(path);
 
                     Console.WriteLine(
