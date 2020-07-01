@@ -79,7 +79,7 @@ namespace Entities.TreeNodes
 
                 foreach (var innerFilePath in innerFilesPaths)
                 {
-                    var fileName = innerFilePath.Substring(innerFilePath.LastIndexOf(Path.DirectorySeparatorChar) + 1);
+                    var fileName = Path.GetFileName(innerFilePath);
 
                     TreeNode node = new TreeFileNode(fileName);
                     node.RelativeLocation = Path.Combine(relativeLocation, name);
