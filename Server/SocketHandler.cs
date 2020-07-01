@@ -43,10 +43,18 @@ namespace Server
 
         public void OnAccept(IAsyncResult result)
         {
-            var socketClient = _socketListener.EndAccept(_acceptResult);
-            SocketData socketData = new SocketData(socketClient, sizeof(int));
-            socketClient.BeginReceive(socketData.Buffer, 0, sizeof(int), SocketFlags.None, OnClientFirstReceive, socketData);
-            _datas.Add(socketData);
+            try
+            {
+                var socketClient = _socketListener.EndAccept(_acceptResult);
+                SocketData socketData = new SocketData(socketClient, sizeof(int));
+                socketClient.BeginReceive(socketData.Buffer, 0, sizeof(int), SocketFlags.None, OnClientFirstReceive,
+                    socketData);
+                _datas.Add(socketData);
+            }
+            catch (SocketException)
+            {
+                Console.WriteLine("Accepting client failed!");
+            }
 
             _acceptResult = _socketListener.BeginAccept(OnAccept, null);
         }
@@ -54,37 +62,57 @@ namespace Server
         private void OnClientFirstReceive(IAsyncResult ar)
         {
             SocketData socketData = (SocketData) ar.AsyncState;
-            socketData.Socket.EndReceive(ar);
-            byte[] data = socketData.Buffer;
-            int dataSize = BitConverter.ToInt32(data, 0);
-            socketData.SetBufferSize(dataSize);
+            try
+            {
+                socketData.Socket.EndReceive(ar);
+                byte[] data = socketData.Buffer;
+                int dataSize = BitConverter.ToInt32(data, 0);
+                socketData.SetBufferSize(dataSize);
 
-            socketData.Socket.BeginReceive(socketData.Buffer, 0, dataSize, SocketFlags.None, OnClientContinueReceive,
-                socketData);
+                socketData.Socket.BeginReceive(socketData.Buffer, 0, dataSize, SocketFlags.None,
+                    OnClientContinueReceive,
+                    socketData);
+            }
+            catch (SocketException)
+            {
+                Console.WriteLine("Client accidentaly disconnected");
+                socketData.Socket.Close();
+                _datas.Remove(socketData);
+            }
         }
 
         private void OnClientContinueReceive(IAsyncResult ar)
         {
             SocketData socketData = (SocketData) ar.AsyncState;
-            int requestDataSize = socketData.Socket.EndReceive(ar);
-            socketData.ReceivedBytes += requestDataSize;
-            if (socketData.ReceivedBytes == socketData.Buffer.Length)
+            try
             {
-                var responseCommand = ProcessRequest(socketData.Buffer);
+                int requestDataSize = socketData.Socket.EndReceive(ar);
+                socketData.ReceivedBytes += requestDataSize;
+                if (socketData.ReceivedBytes == socketData.Buffer.Length)
+                {
+                    var responseCommand = ProcessRequest(socketData.Buffer);
 
-                var bytes = responseCommand.Serialize();
-                
-                Utils.SendWithSizeHeader(socketData.Socket, bytes);
-                
-                socketData.Socket.Shutdown(SocketShutdown.Both);
+                    var bytes = responseCommand.Serialize();
+
+                    Utils.SendWithSizeHeader(socketData.Socket, bytes);
+
+                    socketData.Socket.Shutdown(SocketShutdown.Both);
+                    socketData.Socket.Close();
+                    _datas.Remove(socketData);
+                }
+                else
+                {
+                    socketData.Socket.BeginReceive(socketData.Buffer, socketData.ReceivedBytes,
+                        socketData.Buffer.Length - socketData.ReceivedBytes, SocketFlags.None,
+                        OnClientContinueReceive,
+                        socketData);
+                }
+            }
+            catch (SocketException)
+            {
+                Console.WriteLine("Client accidentaly disconnected");
                 socketData.Socket.Close();
                 _datas.Remove(socketData);
-            }
-            else
-            {
-                socketData.Socket.BeginReceive(socketData.Buffer, socketData.ReceivedBytes, socketData.Buffer.Length - socketData.ReceivedBytes, SocketFlags.None,
-                    OnClientContinueReceive,
-                    socketData);
             }
         }
 
