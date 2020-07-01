@@ -38,7 +38,7 @@ namespace Client
         {
             _connectResult = _socket.BeginConnect(_ipAddress, _port, ar => { }, null);
 
-            while (!_connectResult.AsyncWaitHandle.WaitOne(100))
+            while (!_connectResult.AsyncWaitHandle.WaitOne(Constants.ConnectionTimeoutMilliseconds))
             {
                 Thread.Sleep(1);
             }

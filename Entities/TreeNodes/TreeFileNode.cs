@@ -50,7 +50,7 @@ namespace Entities.TreeNodes
 
             int fileSize = responseGetFileSizeCommand.GetData();
 
-            int pieceSize = 1024768 * 10; // 1 мб????
+            int pieceSize = Constants.SendingFilePieceSize;
 
             FileStream fs = new FileStream(Path.Combine(rootLocation, RelativeLocation, Name), FileMode.CreateNew);
 
@@ -98,7 +98,7 @@ namespace Entities.TreeNodes
                 // Файлы отличаются
                 FileStream fs = new FileStream(Path.Combine(rootLocation, RelativeLocation, Name), FileMode.Open);
                 int fileSize = (int) fs.Length;
-                int pieceSize = 1024768 * 10; // 1 мб????
+                int pieceSize = Constants.SendingFilePieceSize;
 
                 byte[] buffer = new byte[pieceSize];
 

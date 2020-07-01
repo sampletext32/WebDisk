@@ -12,7 +12,7 @@ namespace Entities
     {
         public static void SendWithSizeHeader(Socket socket, byte[] data)
         {
-            socket.Send(BitConverter.GetBytes(data.Length), 0, 4, SocketFlags.None);
+            socket.Send(BitConverter.GetBytes(data.Length), 0, sizeof(int), SocketFlags.None);
 
             int sent = 0;
             while (sent < data.Length)
@@ -24,7 +24,7 @@ namespace Entities
         public static byte[] ReceiveWithSizeHeader(Socket socket)
         {
             byte[] buffer = new byte[4];
-            socket.Receive(buffer, 0, 4, SocketFlags.None);
+            socket.Receive(buffer, 0, sizeof(int), SocketFlags.None);
             int dataSize = BitConverter.ToInt32(buffer, 0);
 
             buffer = new byte[dataSize];

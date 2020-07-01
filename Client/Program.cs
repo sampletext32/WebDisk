@@ -22,12 +22,12 @@ namespace Client
             {
                 Console.WriteLine($"{SharedFolderName} folder not found");
 
-                var treeCommand = SocketHandler.Request(IPAddress.Loopback, 11771)
+                var treeCommand = SocketHandler.Request(IPAddress.Loopback, Constants.ConnectionPort)
                     .PerformCommand<ResponseGetTreeCommand>(new GetTreeCommand());
 
                 var remoteTreeRoot = treeCommand.GetData();
                 remoteTreeRoot.Download(SharedFolderLocation,
-                    SocketHandler.Request(IPAddress.Loopback, 11771), false);
+                    SocketHandler.Request(IPAddress.Loopback, Constants.ConnectionPort), false);
             }
             else
             {

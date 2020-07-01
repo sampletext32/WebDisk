@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Entities;
 
 namespace Server
 {
@@ -10,7 +11,7 @@ namespace Server
     {
         static void Main(string[] args)
         {
-            SocketHandler handler = new SocketHandler(11771);
+            SocketHandler handler = new SocketHandler(Constants.ConnectionPort);
             handler.Init();
             handler.Listen();
 

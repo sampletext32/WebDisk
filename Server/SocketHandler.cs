@@ -37,15 +37,15 @@ namespace Server
                 throw new InvalidOperationException("Socket is not initialized");
             }
 
-            _socketListener.Listen(10);
+            _socketListener.Listen(Constants.ServerMaximumBacklogSockets);
             _acceptResult = _socketListener.BeginAccept(OnAccept, null);
         }
 
         public void OnAccept(IAsyncResult result)
         {
             var socketClient = _socketListener.EndAccept(_acceptResult);
-            SocketData socketData = new SocketData(socketClient, 4);
-            socketClient.BeginReceive(socketData.Buffer, 0, 4, SocketFlags.None, OnClientFirstReceive, socketData);
+            SocketData socketData = new SocketData(socketClient, sizeof(int));
+            socketClient.BeginReceive(socketData.Buffer, 0, sizeof(int), SocketFlags.None, OnClientFirstReceive, socketData);
             _datas.Add(socketData);
 
             _acceptResult = _socketListener.BeginAccept(OnAccept, null);
